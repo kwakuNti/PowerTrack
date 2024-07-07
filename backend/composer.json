@@ -1,0 +1,15 @@
+{
+    "name": "vendor/backend",
+    "description": "Backend for my project",
+    "authors": [
+      {
+        "name": "Clifford Nkansah",
+        "email": "clifford.nkansah@ashesi.edu.gh"
+      }
+    ],
+    "require": {
+      "altorouter/altorouter": "^2.0",
+      "vlucas/phpdotenv": "^5.4"
+    }
+  }
+  
