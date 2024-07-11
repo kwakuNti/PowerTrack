@@ -1,6 +1,8 @@
 // lib/login_screen.dart
 
 import 'package:flutter/material.dart';
+import 'signup.dart';
+import 'login.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -51,7 +53,11 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 232),
               ElevatedButton(
                 onPressed: () {
-                  // Handle create account action
+                  // Navigate to the SignUpPage
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignUpPage()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -68,7 +74,10 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 16),
               GestureDetector(
                 onTap: () {
-                  // Handle login action
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
                 },
                 child: const Text(
                   'Login',
