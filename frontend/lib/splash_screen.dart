@@ -17,12 +17,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 5), () {});
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const LoginScreen())); // Navigate to LoginScreen
+    await Future.delayed(const Duration(seconds: 5));
+    if (!mounted) return; // Check if the widget is still in the tree
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
   }
 
   @override
