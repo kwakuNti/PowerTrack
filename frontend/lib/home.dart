@@ -10,11 +10,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  static const List<String> _titles = <String>[
+    'Home',
+    'Meters',
+    'Transactions',
+    'Settings',
+  ];
+
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    MetersScreen(),
+    MetersPage(),
     TransactionsScreen(),
-    SettingsScreen(), // Updated to SettingsScreen
+    SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -27,8 +34,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
-        automaticallyImplyLeading: false, // This line removes the back button
+        title: Text(_titles[_selectedIndex]),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.account_circle),
@@ -60,13 +67,13 @@ class _HomePageState extends State<HomePage> {
             label: 'Transactions',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings), // Updated to settings icon
-            label: 'Settings', // Updated to Settings
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey, // Set unselected item color to grey
+        unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
     );
@@ -169,7 +176,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          // Add a placeholder for the usage history graph
           Container(
             height: 200,
             color: Colors.grey[200],
@@ -236,15 +242,157 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class MetersScreen extends StatelessWidget {
-  const MetersScreen({super.key});
+class MetersPage extends StatelessWidget {
+  const MetersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Meters Screen',
-        style: TextStyle(fontSize: 24),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildMeterCard(
+                    'Add prepaid meter',
+                    Colors.blue,
+                    Icons.add,
+                    context,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildMeterCard(
+                    'Add postpaid meter',
+                    Colors.red,
+                    Icons.add,
+                    context,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 40),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.insert_drive_file,
+                    size: 80,
+                    color: Colors.grey[300],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Add a meter to see details here',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMeterCard(
+      String title, Color color, IconData icon, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const EnterMeterNumberPage(),
+          ),
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.6, // Make card wider
+        height: 150,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              color.withOpacity(0.7),
+              color.withOpacity(0.4),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 5,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 50,
+              color: Colors.white,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EnterMeterNumberPage extends StatelessWidget {
+  const EnterMeterNumberPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Enter your meter number'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+              'You can manage and top up the credits on your meter anytime',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            const TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Enter your meter number',
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Add verify functionality here
+              },
+              child: const Text('Verify'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -277,3 +425,10 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
+
+void main() => runApp(MaterialApp(
+      home: const HomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+    ));
