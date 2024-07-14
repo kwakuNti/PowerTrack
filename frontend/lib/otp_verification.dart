@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/signup.dart';
 
+import 'home.dart';
+
 class OTPVerificationPage extends StatelessWidget {
   const OTPVerificationPage({super.key});
 
@@ -57,7 +59,10 @@ class OTPVerificationPage extends StatelessWidget {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Add OTP verification functionality here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    ); // Add login functionality here
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4169E1),

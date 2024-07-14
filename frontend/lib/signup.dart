@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/login_screen.dart';
+
+import 'login.dart';
 import 'otp_verification.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -44,98 +46,111 @@ class SignUpPage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
-            TextField(
-              decoration: InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide:
-                      const BorderSide(color: Color(0xFF828282), width: 0.5),
-                ),
-                labelText: 'Full name',
-                labelStyle: const TextStyle(
-                  fontSize: 17,
-                  fontFamily: 'Adamina',
-                  fontWeight: FontWeight.normal,
-                  color: Color(0xFF828282),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              decoration: InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide:
-                      const BorderSide(color: Color(0xFF828282), width: 0.5),
-                ),
-                labelText: 'Email address',
-                labelStyle: const TextStyle(
-                  fontSize: 17,
-                  fontFamily: 'Adamina',
-                  fontWeight: FontWeight.normal,
-                  color: Color(0xFF828282),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide:
-                      const BorderSide(color: Color(0xFF828282), width: 0.5),
-                ),
-                labelText: 'Password',
-                labelStyle: const TextStyle(
-                  fontSize: 17,
-                  fontFamily: 'Adamina',
-                  fontWeight: FontWeight.normal,
-                  color: Color(0xFF828282),
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: 343,
-              height: 60,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const OTPVerificationPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4169E1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+            const Spacer(), // This will push the widgets to the bottom
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF828282), width: 0.5),
+                      ),
+                      labelText: 'Full name',
+                      labelStyle: const TextStyle(
+                        fontSize: 17,
+                        fontFamily: 'Adamina',
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xFF828282),
+                      ),
+                    ),
                   ),
-                  textStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
+                  const SizedBox(height: 20),
+                  TextField(
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF828282), width: 0.5),
+                      ),
+                      labelText: 'Email address',
+                      labelStyle: const TextStyle(
+                        fontSize: 17,
+                        fontFamily: 'Adamina',
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xFF828282),
+                      ),
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                ),
-                child: const Text('Create account',
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                // Add navigation to login functionality here
-              },
-              child: const Text(
-                'Already have an account?',
-                style: TextStyle(fontSize: 16, color: Colors.blue),
+                  const SizedBox(height: 20),
+                  TextField(
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF828282), width: 0.5),
+                      ),
+                      labelText: 'Password',
+                      labelStyle: const TextStyle(
+                        fontSize: 17,
+                        fontFamily: 'Adamina',
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xFF828282),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: 343,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const OTPVerificationPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4169E1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                      ),
+                      child: const Text('Create account',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                      );
+                    },
+                    child: const Text(
+                      'Already have an account?',
+                      style: TextStyle(fontSize: 16, color: Colors.blue),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
