@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/meter_details.dart'; // Import the model
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -242,8 +244,21 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class MetersPage extends StatelessWidget {
+class MetersPage extends StatefulWidget {
   const MetersPage({super.key});
+
+  @override
+  _MetersPageState createState() => _MetersPageState();
+}
+
+class _MetersPageState extends State<MetersPage> {
+  final List<MeterDetails> _meters = [];
+
+  void _addMeter(MeterDetails meterDetails) {
+    setState(() {
+      _meters.add(meterDetails);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -259,19 +274,8 @@ class MetersPage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildMeterCard(
-                    'Add prepaid meter',
-                    Colors.blue,
-                    Icons.add,
-                    context,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildMeterCard(
-                    'Add postpaid meter',
-                    Colors.red,
-                    Icons.add,
-                    context,
-                  ),
+                  _buildAddMeterCard(context),
+                  ..._meters.map((meter) => _buildMeterCard(meter)).toList(),
                 ],
               ),
             ),
@@ -303,14 +307,13 @@ class MetersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMeterCard(
-      String title, Color color, IconData icon, BuildContext context) {
+  Widget _buildAddMeterCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const EnterMeterNumberPage(),
+            builder: (context) => EnterMeterNumberPage(onAddMeter: _addMeter),
           ),
         );
       },
@@ -320,8 +323,8 @@ class MetersPage extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              color.withOpacity(0.7),
-              color.withOpacity(0.4),
+              Colors.blue.withOpacity(0.7),
+              Colors.blue.withOpacity(0.4),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -337,16 +340,16 @@ class MetersPage extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Icon(
-              icon,
+              Icons.add,
               size: 50,
               color: Colors.white,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Text(
-              title,
-              style: const TextStyle(
+              'Add Meter',
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -358,40 +361,202 @@ class MetersPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildMeterCard(MeterDetails meterDetails) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.6, // Make card wider
+      height: 150,
+      margin: const EdgeInsets.only(left: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.purple.withOpacity(0.7),
+            Colors.purple.withOpacity(0.4),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 5,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            meterDetails.meterName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Meter Number: ${meterDetails.meterNumber}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Customer Name: ${meterDetails.customerName}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Customer Number: ${meterDetails.customerNumber}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Address: ${meterDetails.address}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class EnterMeterNumberPage extends StatelessWidget {
-  const EnterMeterNumberPage({super.key});
+class EnterMeterNumberPage extends StatefulWidget {
+  final Function(MeterDetails) onAddMeter;
+
+  const EnterMeterNumberPage({super.key, required this.onAddMeter});
+
+  @override
+  State<EnterMeterNumberPage> createState() => _EnterMeterNumberPageState();
+}
+
+class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _meterNameController = TextEditingController();
+  final TextEditingController _meterNumberController = TextEditingController();
+  final TextEditingController _customerNameController = TextEditingController();
+  final TextEditingController _customerNumberController =
+      TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Enter your meter number'),
+        title: const Text('Enter Meter Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const Text(
-              'You can manage and top up the credits on your meter anytime',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-            const TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter your meter number',
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _meterNameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Meter Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter meter name';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Add verify functionality here
-              },
-              child: const Text('Verify'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _meterNumberController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Meter Number',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter meter number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _customerNameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Customer Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter customer name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _customerNumberController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Customer Number',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter customer number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _addressController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Address',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter address';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    final newMeter = MeterDetails(
+                      meterName: _meterNameController.text,
+                      meterNumber: _meterNumberController.text,
+                      customerName: _customerNameController.text,
+                      customerNumber: _customerNumberController.text,
+                      address: _addressController.text,
+                    );
+                    widget.onAddMeter(newMeter);
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Add Meter'),
+              ),
+            ],
+          ),
         ),
       ),
     );
