@@ -248,7 +248,7 @@ class MetersPage extends StatefulWidget {
   const MetersPage({super.key});
 
   @override
-  _MetersPageState createState() => _MetersPageState();
+  State<MetersPage> createState() => _MetersPageState();
 }
 
 class _MetersPageState extends State<MetersPage> {
@@ -275,7 +275,7 @@ class _MetersPageState extends State<MetersPage> {
               child: Row(
                 children: [
                   _buildAddMeterCard(context),
-                  ..._meters.map((meter) => _buildMeterCard(meter)).toList(),
+                  ..._meters.map((meter) => _buildMeterCard(meter)),
                 ],
               ),
             ),
@@ -338,9 +338,9 @@ class _MetersPageState extends State<MetersPage> {
             ),
           ],
         ),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(
               Icons.add,
               size: 50,
@@ -582,10 +582,45 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Settings Screen',
-        style: TextStyle(fontSize: 24),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView(
+        children: const [
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Account'),
+            subtitle: Text('Manage your account settings'),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.notifications),
+            title: Text('Notifications'),
+            subtitle: Text('Manage notification preferences'),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.lock),
+            title: Text('Privacy'),
+            subtitle: Text('Manage your privacy settings'),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.help),
+            title: Text('Help & Support'),
+            subtitle: Text('Get help and support'),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.info),
+            title: Text('About'),
+            subtitle: Text('Learn more about the app'),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+        ],
       ),
     );
   }
