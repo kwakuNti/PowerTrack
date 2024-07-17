@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../models/meter_details.dart'; // Import the model
 
@@ -43,7 +44,11 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              // Add profile navigation functionality here
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ManageAccountPage()),
+              );
             },
           ),
           IconButton(
@@ -83,163 +88,187 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // Simulate a network call
+    await Future.delayed(const Duration(seconds: 2));
+    _refreshController.refreshCompleted();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: [
-          const Text(
-            'Scheduled Maintenance',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Mon, 13th July 2022 7:45 PM',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'There will be scheduled maintenance at Achimota Bulk Supply Point. Your power will be off from 8am to 2pm.',
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'ECG releases 8-day ‘dumsor’ timetable for Accra',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Mon, 13th July 2022 7:45 PM',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Lorem ipsum dolor sit amet, consectetur sadipscing elitr, sed diam nonumy eirmodtempor invidunt ut labore et dolore magn.',
-          ),
-          const SizedBox(height: 8),
-          Image.network(
-            'https://via.placeholder.com/150',
-            height: 150,
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Invoice for New Meter Connection',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            '12/12/2022',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'An invoice has been sent to you by Franklina Amoah to pay for new meter connection at Achimota Pillar 2.',
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              // Add view invoice functionality here
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+    return SmartRefresher(
+      controller: _refreshController,
+      onRefresh: _onRefresh,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            const Text(
+              'Scheduled Maintenance',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            child: const Text('View Invoice'),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Usage History',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            height: 200,
-            color: Colors.grey[200],
-            child: const Center(child: Text('Graph Placeholder')),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Recent Transactions',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const ListTile(
-            leading: Icon(Icons.add, color: Colors.green),
-            title: Text('Bought Credit'),
-            subtitle: Text('Mon, 12th July 2022 10:00 AM'),
-            trailing: Text('₵50.00'),
-          ),
-          const ListTile(
-            leading: Icon(Icons.add, color: Colors.green),
-            title: Text('Bought Credit'),
-            subtitle: Text('Sun, 11th July 2022 4:30 PM'),
-            trailing: Text('₵30.00'),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Quick Actions',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () {
-              // Add buy credit functionality here
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+            const SizedBox(height: 8),
+            const Text(
+              'Mon, 13th July 2022 7:45 PM',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
               ),
             ),
-            child: const Text('Buy Credit'),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              // Add set reminder functionality here
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+            const SizedBox(height: 8),
+            const Text(
+              'There will be scheduled maintenance at Achimota Bulk Supply Point. Your power will be off from 8am to 2pm.',
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'ECG releases 8-day ‘dumsor’ timetable for Accra',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            child: const Text('Set Reminder'),
-          ),
-        ],
+            const SizedBox(height: 8),
+            const Text(
+              'Mon, 13th July 2022 7:45 PM',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Lorem ipsum dolor sit amet, consectetur sadipscing elitr, sed diam nonumy eirmodtempor invidunt ut labore et dolore magn.',
+            ),
+            const SizedBox(height: 8),
+            Image.network(
+              'https://via.placeholder.com/150',
+              height: 150,
+              fit: BoxFit.cover,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Invoice for New Meter Connection',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '12/12/2022',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'An invoice has been sent to you by Franklina Amoah to pay for new meter connection at Achimota Pillar 2.',
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                // Add view invoice functionality here
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text('View Invoice'),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Usage History',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 200,
+              color: Colors.grey[200],
+              child: const Center(child: Text('Graph Placeholder')),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Recent Transactions',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const ListTile(
+              leading: Icon(Icons.add, color: Colors.green),
+              title: Text('Bought Credit'),
+              subtitle: Text('Mon, 12th July 2022 10:00 AM'),
+              trailing: Text('₵50.00'),
+            ),
+            const ListTile(
+              leading: Icon(Icons.add, color: Colors.green),
+              title: Text('Bought Credit'),
+              subtitle: Text('Sun, 11th July 2022 4:30 PM'),
+              trailing: Text('₵30.00'),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Quick Actions',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                // Add buy credit functionality here
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text('Buy Credit'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                // Add set reminder functionality here
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text('Set Reminder'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -254,6 +283,8 @@ class MetersPage extends StatefulWidget {
 
 class _MetersPageState extends State<MetersPage> {
   final List<MeterDetails> _meters = [];
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   void _addMeter(MeterDetails meterDetails) {
     setState(() {
@@ -261,94 +292,110 @@ class _MetersPageState extends State<MetersPage> {
     });
   }
 
+  void _onRefresh() async {
+    // Simulate a network call
+    await Future.delayed(const Duration(seconds: 2));
+    _refreshController.refreshCompleted();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildAddMeterCard(context),
-                  ..._meters.map((meter) => _buildMeterCard(meter)),
-                ],
+      body: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        // ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildAddMeterCard(context),
+                    ..._meters.map((meter) => _buildMeterCard(meter)),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-            Expanded(
-              child: _meters.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: _meters.length,
-                      itemBuilder: (context, index) {
-                        final meter = _meters[index];
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Meter Name: ${meter.meterName}',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  'Meter Number: ${meter.meterNumber}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  'Customer Name: ${meter.customerName}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  'Customer Number: ${meter.customerNumber}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  'Address: ${meter.address}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ],
+              const SizedBox(height: 40),
+              Expanded(
+                child: _meters.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _meters.length,
+                        itemBuilder: (context, index) {
+                          final meter = _meters[index];
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          ),
-                        );
-                      },
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.insert_drive_file,
-                          size: 80,
-                          color: Colors.grey[300],
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'No meters found',
-                          style: TextStyle(
-                            fontSize: 24,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Meter Name: ${meter.meterName}',
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Meter Number: ${meter.meterNumber}',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Customer Name: ${meter.customerName}',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Customer Number: ${meter.customerNumber}',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Address: ${meter.address}',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.insert_drive_file,
+                            size: 80,
                             color: Colors.grey[300],
                           ),
-                        ),
-                      ],
-                    ),
-            ),
-          ],
+                          const SizedBox(height: 20),
+                          Text(
+                            'No meters found',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -559,38 +606,59 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
   }
 }
 
-class TransactionsScreen extends StatelessWidget {
+class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({super.key});
 
   @override
+  State<TransactionsScreen> createState() => _TransactionsScreenState();
+}
+
+class _TransactionsScreenState extends State<TransactionsScreen> {
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // Simulate a network call
+    await Future.delayed(const Duration(seconds: 2));
+    _refreshController.refreshCompleted();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: const [
-            TransactionTile(
-              date: '2024-07-15',
-              amount: '50.00',
-              description: 'Credit Purchase',
-            ),
-            Divider(),
-            TransactionTile(
-              date: '2024-07-10',
-              amount: '30.00',
-              description: 'Credit Purchase',
-            ),
-            Divider(),
-            TransactionTile(
-              date: '2024-07-05',
-              amount: '20.00',
-              description: 'Credit Purchase',
-            ),
-            // Add more transactions here
-          ],
+    return SmartRefresher(
+      controller: _refreshController,
+      onRefresh: _onRefresh,
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: const [
+              TransactionTile(
+                date: '2024-07-15',
+                amount: '50.00',
+                description: 'Credit Purchase',
+              ),
+              Divider(),
+              TransactionTile(
+                date: '2024-07-10',
+                amount: '30.00',
+                description: 'Credit Purchase',
+              ),
+              Divider(),
+              TransactionTile(
+                date: '2024-07-05',
+                amount: '20.00',
+                description: 'Credit Purchase',
+              ),
+              // Add more transactions here
+            ],
+          ),
         ),
       ),
     );
@@ -694,6 +762,86 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ManageAccountPage extends StatelessWidget {
+  const ManageAccountPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Contact info'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage(
+                  'https://via.placeholder.com/150'), // Replace with your image
+            ),
+            const SizedBox(height: 16),
+            _buildInfoRow('Name', 'Warren Buffet', true),
+            _buildInfoRow('Birthdate', '05 November 1993', true),
+            _buildInfoRow('Gender', 'Male', true),
+            _buildInfoRow('Email', 'warren.buff@invest.ai', false),
+            _buildInfoRow('Phone Number', '-', false),
+            _buildInfoRow('Address', '-', false),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String title, String value, bool isEditable) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          if (isEditable)
+            TextButton(
+              onPressed: () {
+                // Handle change action
+              },
+              child: const Text(
+                'Change',
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
