@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 
 import '../models/meter_details.dart'; // Import the model
 
@@ -568,59 +569,136 @@ class TransactionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Transactions Screen',
-        style: TextStyle(fontSize: 24),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: const [
+            TransactionTile(
+              date: '2024-07-15',
+              amount: '50.00',
+              description: 'Credit Purchase',
+            ),
+            Divider(),
+            TransactionTile(
+              date: '2024-07-10',
+              amount: '30.00',
+              description: 'Credit Purchase',
+            ),
+            Divider(),
+            TransactionTile(
+              date: '2024-07-05',
+              amount: '20.00',
+              description: 'Credit Purchase',
+            ),
+            // Add more transactions here
+          ],
+        ),
       ),
     );
   }
 }
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class TransactionTile extends StatelessWidget {
+  final String date;
+  final String amount;
+  final String description;
+
+  const TransactionTile({
+    super.key,
+    required this.date,
+    required this.amount,
+    required this.description,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: const [
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Account'),
-            subtitle: Text('Manage your account settings'),
-            trailing: Icon(Icons.arrow_forward_ios),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.notifications),
-            title: Text('Notifications'),
-            subtitle: Text('Manage notification preferences'),
-            trailing: Icon(Icons.arrow_forward_ios),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.lock),
-            title: Text('Privacy'),
-            subtitle: Text('Manage your privacy settings'),
-            trailing: Icon(Icons.arrow_forward_ios),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.help),
-            title: Text('Help & Support'),
-            subtitle: Text('Get help and support'),
-            trailing: Icon(Icons.arrow_forward_ios),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.info),
-            title: Text('About'),
-            subtitle: Text('Learn more about the app'),
-            trailing: Icon(Icons.arrow_forward_ios),
-          ),
-        ],
+    return ListTile(
+      leading: const Icon(Icons.receipt),
+      title: Text('$date - $description'),
+      subtitle: Text('Amount: \$$amount'),
+      trailing: const Icon(Icons.arrow_forward_ios),
+    );
+  }
+}
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _biometricsEnabled = false;
+  final LocalAuthentication auth = LocalAuthentication();
+
+  void _toggleBiometrics(bool value) async {
+    bool canCheckBiometrics = await auth.canCheckBiometrics;
+    if (canCheckBiometrics) {
+      setState(() {
+        _biometricsEnabled = value;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Biometric authentication is not available')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            const Center(
+              child: CircleAvatar(
+                radius: 80,
+                backgroundImage: AssetImage(
+                    'assets/profile_picture.png'), // Update this with your image path
+              ),
+            ),
+            const SizedBox(height: 20),
+            const ListTile(
+              leading: Icon(Icons.credit_card),
+              title: Text('Manage Cards'),
+              trailing: Icon(Icons.arrow_forward_ios),
+            ),
+            const Divider(),
+            const ListTile(
+              leading: Icon(Icons.flash_on),
+              title: Text('Usage'),
+              trailing: Icon(Icons.arrow_forward_ios),
+            ),
+            const Divider(),
+            const ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Manage Account'),
+              trailing: Icon(Icons.arrow_forward_ios),
+            ),
+            const Divider(),
+            SwitchListTile(
+              title: const Text('Enable Biometrics'),
+              value: _biometricsEnabled,
+              onChanged: _toggleBiometrics,
+            ),
+            const Divider(),
+            const ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Log out'),
+              trailing: Icon(Icons.arrow_forward_ios),
+            ),
+          ],
+        ),
       ),
     );
   }
