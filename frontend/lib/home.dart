@@ -282,25 +282,71 @@ class _MetersPageState extends State<MetersPage> {
             ),
             const SizedBox(height: 40),
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.insert_drive_file,
-                    size: 80,
-                    color: Colors.grey[300],
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Add a meter to see details here',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
+              child: _meters.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: _meters.length,
+                      itemBuilder: (context, index) {
+                        final meter = _meters[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Meter Name: ${meter.meterName}',
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Meter Number: ${meter.meterNumber}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Customer Name: ${meter.customerName}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Customer Number: ${meter.customerNumber}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Address: ${meter.address}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.insert_drive_file,
+                          size: 80,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'No meters found',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.grey[300],
+                          ),
+                        ),
+                      ],
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -319,45 +365,43 @@ class _MetersPageState extends State<MetersPage> {
         );
       },
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.6, // Make card wider
-        height: 150,
+        width: MediaQuery.of(context).size.width * 0.8, // Make card wider
+        height: 200,
+        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.blue.withOpacity(0.7),
-              Colors.blue.withOpacity(0.4),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(10),
+          color: Colors.teal[700],
+          borderRadius: BorderRadius.circular(15),
           boxShadow: const [
             BoxShadow(
-              color: Colors.black12,
-              blurRadius: 5,
+              color: Colors.black26,
+              blurRadius: 10,
               spreadRadius: 1,
+              offset: Offset(0, 5),
             ),
           ],
         ),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add,
-              size: 50,
-              color: Colors.white,
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Add Meter',
-              style: TextStyle(
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add,
+                size: 50,
                 color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              SizedBox(height: 10),
+              Text(
+                'Add Meter',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -365,76 +409,67 @@ class _MetersPageState extends State<MetersPage> {
 
   Widget _buildMeterCard(MeterDetails meterDetails) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.6, // Make card wider
-      height: 150,
-      margin: const EdgeInsets.only(left: 16),
+      width: MediaQuery.of(context).size.width * 0.8, // Make card wider
+      height: 200,
+      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.purple.withOpacity(0.7),
-            Colors.purple.withOpacity(0.4),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.blueGrey[800],
+        borderRadius: BorderRadius.circular(15),
         boxShadow: const [
           BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
+            color: Colors.black26,
+            blurRadius: 10,
             spreadRadius: 1,
+            offset: Offset(0, 5),
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            meterDetails.meterName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  meterDetails.meterName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Meter Number: ${meterDetails.meterNumber}',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Meter Number: ${meterDetails.meterNumber}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
+            const Align(
+              alignment: Alignment.bottomRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.electric_meter, color: Colors.white70, size: 18),
+                  SizedBox(width: 5),
+                  Text(
+                    'Meter Details',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Customer Name: ${meterDetails.customerName}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Customer Number: ${meterDetails.customerNumber}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Address: ${meterDetails.address}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -468,77 +503,18 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
-              TextFormField(
-                controller: _meterNameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Meter Name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter meter name';
-                  }
-                  return null;
-                },
-              ),
+              _buildRoundedTextField(_meterNameController, 'Meter Name'),
               const SizedBox(height: 20),
-              TextFormField(
-                controller: _meterNumberController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Meter Number',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter meter number';
-                  }
-                  return null;
-                },
-              ),
+              _buildRoundedTextField(_meterNumberController, 'Meter Number'),
               const SizedBox(height: 20),
-              TextFormField(
-                controller: _customerNameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Customer Name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter customer name';
-                  }
-                  return null;
-                },
-              ),
+              _buildRoundedTextField(_customerNameController, 'Customer Name'),
               const SizedBox(height: 20),
-              TextFormField(
-                controller: _customerNumberController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Customer Number',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter customer number';
-                  }
-                  return null;
-                },
-              ),
+              _buildRoundedTextField(
+                  _customerNumberController, 'Customer Number'),
               const SizedBox(height: 20),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Address',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter address';
-                  }
-                  return null;
-                },
-              ),
+              _buildRoundedTextField(_addressController, 'Address'),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -560,6 +536,25 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildRoundedTextField(
+      TextEditingController controller, String label) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        labelText: label,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
     );
   }
 }
