@@ -51,12 +51,6 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // Add new item functionality here
-            },
-          ),
         ],
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
@@ -116,159 +110,157 @@ class _HomeScreenState extends State<HomeScreen> {
     return SmartRefresher(
       controller: _refreshController,
       onRefresh: _onRefresh,
-      child: Padding(
+      child: ListView(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            const Text(
-              'Scheduled Maintenance',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+        children: [
+          const Text(
+            'Scheduled Maintenance',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Mon, 13th July 2022 7:45 PM',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'There will be scheduled maintenance at Achimota Bulk Supply Point. Your power will be off from 8am to 2pm.',
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'ECG releases 8-day ‘dumsor’ timetable for Accra',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Mon, 13th July 2022 7:45 PM',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Lorem ipsum dolor sit amet, consectetur sadipscing elitr, sed diam nonumy eirmodtempor invidunt ut labore et dolore magn.',
+          ),
+          const SizedBox(height: 8),
+          Image.network(
+            'https://via.placeholder.com/150',
+            height: 150,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Invoice for New Meter Connection',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '12/12/2022',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'An invoice has been sent to you by Franklina Amoah to pay for new meter connection at Achimota Pillar 2.',
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              // Add view invoice functionality here
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Mon, 13th July 2022 7:45 PM',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
+            child: const Text('View Invoice'),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Usage History',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            height: 200,
+            color: Colors.grey[200],
+            child: const Center(child: Text('Graph Placeholder')),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Recent Transactions',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const ListTile(
+            leading: Icon(Icons.add, color: Colors.green),
+            title: Text('Bought Credit'),
+            subtitle: Text('Mon, 12th July 2022 10:00 AM'),
+            trailing: Text('₵50.00'),
+          ),
+          const ListTile(
+            leading: Icon(Icons.add, color: Colors.green),
+            title: Text('Bought Credit'),
+            subtitle: Text('Sun, 11th July 2022 4:30 PM'),
+            trailing: Text('₵30.00'),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Quick Actions',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () {
+              // Add buy credit functionality here
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'There will be scheduled maintenance at Achimota Bulk Supply Point. Your power will be off from 8am to 2pm.',
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'ECG releases 8-day ‘dumsor’ timetable for Accra',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            child: const Text('Buy Credit'),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              // Add set reminder functionality here
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Mon, 13th July 2022 7:45 PM',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Lorem ipsum dolor sit amet, consectetur sadipscing elitr, sed diam nonumy eirmodtempor invidunt ut labore et dolore magn.',
-            ),
-            const SizedBox(height: 8),
-            Image.network(
-              'https://via.placeholder.com/150',
-              height: 150,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Invoice for New Meter Connection',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '12/12/2022',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'An invoice has been sent to you by Franklina Amoah to pay for new meter connection at Achimota Pillar 2.',
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Add view invoice functionality here
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text('View Invoice'),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Usage History',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              height: 200,
-              color: Colors.grey[200],
-              child: const Center(child: Text('Graph Placeholder')),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Recent Transactions',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const ListTile(
-              leading: Icon(Icons.add, color: Colors.green),
-              title: Text('Bought Credit'),
-              subtitle: Text('Mon, 12th July 2022 10:00 AM'),
-              trailing: Text('₵50.00'),
-            ),
-            const ListTile(
-              leading: Icon(Icons.add, color: Colors.green),
-              title: Text('Bought Credit'),
-              subtitle: Text('Sun, 11th July 2022 4:30 PM'),
-              trailing: Text('₵30.00'),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Quick Actions',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () {
-                // Add buy credit functionality here
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text('Buy Credit'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Add set reminder functionality here
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text('Set Reminder'),
-            ),
-          ],
-        ),
+            child: const Text('Set Reminder'),
+          ),
+        ],
       ),
     );
   }
@@ -634,32 +626,28 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     return SmartRefresher(
       controller: _refreshController,
       onRefresh: _onRefresh,
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            children: const [
-              TransactionTile(
-                date: '2024-07-15',
-                amount: '50.00',
-                description: 'Credit Purchase',
-              ),
-              Divider(),
-              TransactionTile(
-                date: '2024-07-10',
-                amount: '30.00',
-                description: 'Credit Purchase',
-              ),
-              Divider(),
-              TransactionTile(
-                date: '2024-07-05',
-                amount: '20.00',
-                description: 'Credit Purchase',
-              ),
-              // Add more transactions here
-            ],
+      child: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: const [
+          TransactionTile(
+            date: '2024-07-15',
+            amount: '50.00',
+            description: 'Credit Purchase',
           ),
-        ),
+          Divider(),
+          TransactionTile(
+            date: '2024-07-10',
+            amount: '30.00',
+            description: 'Credit Purchase',
+          ),
+          Divider(),
+          TransactionTile(
+            date: '2024-07-05',
+            amount: '20.00',
+            description: 'Credit Purchase',
+          ),
+          // Add more transactions here
+        ],
       ),
     );
   }
@@ -698,6 +686,41 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _biometricsEnabled = false;
   final LocalAuthentication auth = LocalAuthentication();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // Simulate fetching new data
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Logout'),
+          content: Text('Are you sure you want to log out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                // Add your logout logic here
+              },
+              child: Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _toggleBiometrics(bool value) async {
     bool canCheckBiometrics = await auth.canCheckBiometrics;
@@ -719,51 +742,75 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            const Center(
-              child: CircleAvatar(
-                radius: 80,
-                backgroundImage: AssetImage(
-                    'assets/profile_picture.png'), // Update this with your image path
+      body: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              const Center(
+                child: CircleAvatar(
+                  radius: 80,
+                  backgroundImage: AssetImage(
+                      'assets/profile_picture.png'), // Update this with your image path
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('Manage Cards'),
-              trailing: Icon(Icons.arrow_forward_ios),
-            ),
-            const Divider(),
-            const ListTile(
-              leading: Icon(Icons.flash_on),
-              title: Text('Usage'),
-              trailing: Icon(Icons.arrow_forward_ios),
-            ),
-            const Divider(),
-            const ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Manage Account'),
-              trailing: Icon(Icons.arrow_forward_ios),
-            ),
-            const Divider(),
-            SwitchListTile(
-              title: const Text('Enable Biometrics'),
-              value: _biometricsEnabled,
-              onChanged: _toggleBiometrics,
-            ),
-            const Divider(),
-            const ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Log out'),
-              trailing: Icon(Icons.arrow_forward_ios),
-            ),
-          ],
+              const SizedBox(height: 20),
+              ListTile(
+                leading: Icon(Icons.credit_card),
+                title: Text('Manage Cards'),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ManageCardPage()),
+                  );
+                },
+              ),
+              const Divider(),
+              const ListTile(
+                leading: Icon(Icons.flash_on),
+                title: Text('Usage'),
+                trailing: Icon(Icons.arrow_forward_ios),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Manage Account'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ManageAccountPage()),
+                  );
+                },
+              ),
+              const Divider(),
+              SwitchListTile(
+                title: const Text('Enable Biometrics'),
+                value: _biometricsEnabled,
+                onChanged: _toggleBiometrics,
+              ),
+              const Divider(),
+              ListTile(
+                title: const Text('Logout'),
+                onTap: _showLogoutDialog,
+              ),
+              const Divider(),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 }
 
@@ -774,13 +821,14 @@ class ManageAccountPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contact info'),
+        title: const Text('Contact Info'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -791,12 +839,17 @@ class ManageAccountPage extends StatelessWidget {
               backgroundImage: NetworkImage(
                   'https://via.placeholder.com/150'), // Replace with your image
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             _buildInfoRow('Name', 'Warren Buffet', true),
+            const Divider(thickness: 1.5),
             _buildInfoRow('Birthdate', '05 November 1993', true),
+            const Divider(thickness: 1.5),
             _buildInfoRow('Gender', 'Male', true),
+            const Divider(thickness: 1.5),
             _buildInfoRow('Email', 'warren.buff@invest.ai', false),
+            const Divider(thickness: 1.5),
             _buildInfoRow('Phone Number', '-', false),
+            const Divider(thickness: 1.5),
             _buildInfoRow('Address', '-', false),
           ],
         ),
@@ -817,7 +870,7 @@ class ManageAccountPage extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   color: Colors.grey,
-                  fontSize: 12,
+                  fontSize: 14,
                 ),
               ),
               const SizedBox(height: 4),
@@ -825,6 +878,7 @@ class ManageAccountPage extends StatelessWidget {
                 value,
                 style: const TextStyle(
                   fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -837,7 +891,7 @@ class ManageAccountPage extends StatelessWidget {
               child: const Text(
                 'Change',
                 style: TextStyle(
-                  color: Colors.green,
+                  color: Colors.blue,
                 ),
               ),
             ),
@@ -853,3 +907,70 @@ void main() => runApp(MaterialApp(
         primarySwatch: Colors.blue,
       ),
     ));
+
+class ManageCardPage extends StatefulWidget {
+  const ManageCardPage({super.key});
+
+  @override
+  State<ManageCardPage> createState() => _ManageCardPageState();
+}
+
+class _ManageCardPageState extends State<ManageCardPage> {
+  List<String> cards = ['Card 1', 'Card 2', 'Card 3']; // Example cards
+
+  void deleteCard(int index) {
+    setState(() {
+      cards.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Manage Cards'),
+      ),
+      body: ListView.builder(
+        itemCount: cards.length,
+        itemBuilder: (context, index) {
+          return CardItem(
+            cardName: cards[index],
+            onDelete: () => deleteCard(index),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CardItem extends StatelessWidget {
+  final String cardName;
+  final VoidCallback onDelete;
+
+  CardItem({required this.cardName, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      elevation: 5,
+      child: ListTile(
+        contentPadding: EdgeInsets.all(15.0),
+        title: Text(
+          cardName,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Colors.red),
+          onPressed: onDelete,
+        ),
+      ),
+    );
+  }
+}
