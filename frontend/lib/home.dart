@@ -449,7 +449,7 @@ class _MetersPageState extends State<MetersPage> {
   Widget _buildMeterCard(MeterDetails meterDetails) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8, // Make card wider
-      height: 200,
+      height: 220, // Adjust height to accommodate the button
       margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
       decoration: BoxDecoration(
         color: Colors.blueGrey[800],
@@ -507,9 +507,133 @@ class _MetersPageState extends State<MetersPage> {
                 ],
               ),
             ),
+            const SizedBox(
+                height: 10), // Add spacing between details and button
+            Align(
+              alignment: Alignment.bottomRight,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            PaymentPage(meterId: meterDetails.meterNumber)),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.teal, // Text color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                ),
+                child: const Text('Buy Credit'),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class PaymentPage extends StatefulWidget {
+  final String meterId;
+
+  PaymentPage({required this.meterId});
+
+  @override
+  _PaymentPageState createState() => _PaymentPageState();
+}
+
+class _PaymentPageState extends State<PaymentPage> {
+  String _paymentMethod = 'momo';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Payment for Meter ${widget.meterId}'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Select Payment Method',
+              style: TextStyle(fontSize: 18.0),
+            ),
+            ListTile(
+              title: const Text('Mobile Money'),
+              leading: Radio<String>(
+                value: 'momo',
+                groupValue: _paymentMethod,
+                onChanged: (String? value) {
+                  setState(() {
+                    _paymentMethod = value!;
+                  });
+                },
+              ),
+            ),
+            ListTile(
+              title: const Text('Card (Visa)'),
+              leading: Radio<String>(
+                value: 'card',
+                groupValue: _paymentMethod,
+                onChanged: (String? value) {
+                  setState(() {
+                    _paymentMethod = value!;
+                  });
+                },
+              ),
+            ),
+            if (_paymentMethod == 'momo') MobileMoneyForm(),
+            if (_paymentMethod == 'card') CardPaymentForm(),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                // Handle payment submission logic here
+              },
+              child: Text('Submit Payment'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MobileMoneyForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(
+          decoration: InputDecoration(labelText: 'MoMo Number'),
+        ),
+      ],
+    );
+  }
+}
+
+class CardPaymentForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(
+          decoration: InputDecoration(labelText: 'Card Number'),
+        ),
+        TextField(
+          decoration: InputDecoration(labelText: 'Expiry Date'),
+        ),
+        TextField(
+          decoration: InputDecoration(labelText: 'CVV'),
+        ),
+      ],
     );
   }
 }
@@ -691,7 +815,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _onRefresh() async {
     // Simulate fetching new data
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
@@ -700,21 +824,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Logout'),
-          content: Text('Are you sure you want to log out?'),
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to log out?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 // Add your logout logic here
               },
-              child: Text('Logout'),
+              child: const Text('Logout'),
             ),
           ],
         );
@@ -758,9 +882,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 20),
               ListTile(
-                leading: Icon(Icons.credit_card),
-                title: Text('Manage Cards'),
-                trailing: Icon(Icons.arrow_forward_ios),
+                leading: const Icon(Icons.credit_card),
+                title: const Text('Manage Cards'),
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -789,13 +913,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               const Divider(),
-              SwitchListTile(
+              ListTile(
+                leading: const Icon(Icons.lock),
                 title: const Text('Enable Biometrics'),
-                value: _biometricsEnabled,
-                onChanged: _toggleBiometrics,
+                trailing: Switch(
+                  value: _biometricsEnabled,
+                  onChanged: _toggleBiometrics,
+                ),
               ),
               const Divider(),
               ListTile(
+                leading: const Icon(Icons.logout),
                 title: const Text('Logout'),
                 onTap: _showLogoutDialog,
               ),
@@ -828,29 +956,29 @@ class ManageAccountPage extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             const CircleAvatar(
-              radius: 50,
+              radius: 70,
               backgroundImage: NetworkImage(
                   'https://via.placeholder.com/150'), // Replace with your image
             ),
             const SizedBox(height: 24),
-            _buildInfoRow('Name', 'Warren Buffet', true),
+            _buildInfoRow('Name', 'Warren Buffet', false),
             const Divider(thickness: 1.5),
-            _buildInfoRow('Birthdate', '05 November 1993', true),
+            _buildInfoRow('Birthdate', '05 November 1993', false),
             const Divider(thickness: 1.5),
-            _buildInfoRow('Gender', 'Male', true),
+            _buildInfoRow('Gender', 'Male', false),
             const Divider(thickness: 1.5),
             _buildInfoRow('Email', 'warren.buff@invest.ai', false),
             const Divider(thickness: 1.5),
-            _buildInfoRow('Phone Number', '-', false),
+            _buildInfoRow('Phone Number', '0557725781', true),
             const Divider(thickness: 1.5),
-            _buildInfoRow('Address', '-', false),
+            _buildInfoRow('Address', 'greater accra', false),
+            const Divider(thickness: 1.5),
           ],
         ),
       ),
@@ -928,7 +1056,7 @@ class _ManageCardPageState extends State<ManageCardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Cards'),
+        title: const Text('Manage Cards'),
       ),
       body: ListView.builder(
         itemCount: cards.length,
@@ -947,7 +1075,7 @@ class CardItem extends StatelessWidget {
   final String cardName;
   final VoidCallback onDelete;
 
-  CardItem({required this.cardName, required this.onDelete});
+  const CardItem({required this.cardName, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -955,19 +1083,19 @@ class CardItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       elevation: 5,
       child: ListTile(
-        contentPadding: EdgeInsets.all(15.0),
+        contentPadding: const EdgeInsets.all(15.0),
         title: Text(
           cardName,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
           ),
         ),
         trailing: IconButton(
-          icon: Icon(Icons.delete, color: Colors.red),
+          icon: const Icon(Icons.delete, color: Colors.red),
           onPressed: onDelete,
         ),
       ),
