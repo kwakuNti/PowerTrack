@@ -1,118 +1,96 @@
 import 'package:flutter/material.dart';
+import 'home.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class ManageAccountPage extends StatelessWidget {
+  const ManageAccountPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Contact Info'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Add back navigation functionality here
+            Navigator.pop(context);
           },
         ),
-        title: const Text('Contact info'),
-        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 20),
             const CircleAvatar(
-              radius: 50,
+              radius: 70,
               backgroundImage: NetworkImage(
-                  'https://example.com/profile.jpg'), // Replace with your image URL
+                  'https://via.placeholder.com/150'), // Replace with your image
             ),
-            const SizedBox(height: 20),
-            _buildInfoField(
-              context,
-              label: 'Name',
-              value: 'Warren Buffet',
-              onChange: () {
-                // Add change functionality here
-              },
-            ),
-            _buildInfoField(
-              context,
-              label: 'Birthdate',
-              value: '05 November 1993',
-              onChange: () {
-                // Add change functionality here
-              },
-            ),
-            _buildInfoField(
-              context,
-              label: 'Gender',
-              value: 'Male',
-              onChange: () {
-                // Add change functionality here
-              },
-            ),
-            _buildInfoField(
-              context,
-              label: 'Email',
-              value: 'warren.buff@invest.ai',
-            ),
-            _buildInfoField(
-              context,
-              label: 'Phone Number',
-              value: '-',
-            ),
-            _buildInfoField(
-              context,
-              label: 'Address',
-              value: '-',
-            ),
+            const SizedBox(height: 24),
+            _buildInfoRow('Name', 'Warren Buffet', false),
+            const Divider(thickness: 1.5),
+            _buildInfoRow('Birthdate', '05 November 1993', false),
+            const Divider(thickness: 1.5),
+            _buildInfoRow('Gender', 'Male', false),
+            const Divider(thickness: 1.5),
+            _buildInfoRow('Email', 'warren.buff@invest.ai', false),
+            const Divider(thickness: 1.5),
+            _buildInfoRow('Phone Number', '0557725781', true),
+            const Divider(thickness: 1.5),
+            _buildInfoRow('Address', 'greater accra', false),
+            const Divider(thickness: 1.5),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoField(BuildContext context,
-      {required String label, required String value, Function()? onChange}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (onChange != null)
-              TextButton(
-                onPressed: onChange,
-                child: const Text(
-                  'Change',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 16,
-                  ),
+  Widget _buildInfoRow(String title, String value, bool isEditable) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
                 ),
               ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black,
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-        ),
-        const Divider(),
-      ],
+          if (isEditable)
+            TextButton(
+              onPressed: () {
+                // Handle change action
+              },
+              child: const Text(
+                'Change',
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
+
+void main() => runApp(MaterialApp(
+      home: const HomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+    ));
