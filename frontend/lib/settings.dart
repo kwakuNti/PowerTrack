@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'transaction.dart';
 import '../models/meter_details.dart'; // Import the model
 import 'home.dart';
@@ -78,67 +79,85 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-      ),
       body: SmartRefresher(
         controller: _refreshController,
         onRefresh: _onRefresh,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            children: [
-              const Center(
-                child: CircleAvatar(
-                  radius: 80,
-                  backgroundImage: AssetImage(
-                      'assets/profile_picture.png'), // Update this with your image path
-                ),
+        child: Stack(
+          children: [
+            CustomPaint(
+              size: Size(MediaQuery.of(context).size.width,
+                  MediaQuery.of(context).size.height),
+              painter: BackgroundPainter(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView(
+                children: [
+                  const Center(
+                    child: CircleAvatar(
+                      radius: 80,
+                      backgroundImage: AssetImage(
+                          'assets/profile_picture.png'), // Update this with your image path
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ListTile(
+                    leading: const Icon(Icons.credit_card),
+                    title: Text(
+                      'Manage Cards',
+                      style: GoogleFonts.poppins(),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ManageCardPage()),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: Text(
+                      'Manage Account',
+                      style: GoogleFonts.poppins(),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ManageAccountPage()),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.lock),
+                    title: Text(
+                      'Enable Biometrics',
+                      style: GoogleFonts.poppins(),
+                    ),
+                    trailing: Switch(
+                      value: _biometricsEnabled,
+                      onChanged: _toggleBiometrics,
+                    ),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: Text(
+                      'Logout',
+                      style: GoogleFonts.poppins(),
+                    ),
+                    onTap: _showLogoutDialog,
+                  ),
+                  const Divider(),
+                ],
               ),
-              const SizedBox(height: 20),
-              ListTile(
-                leading: const Icon(Icons.credit_card),
-                title: const Text('Manage Cards'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ManageCardPage()),
-                  );
-                },
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Manage Account'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ManageAccountPage()),
-                  );
-                },
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.lock),
-                title: const Text('Enable Biometrics'),
-                trailing: Switch(
-                  value: _biometricsEnabled,
-                  onChanged: _toggleBiometrics,
-                ),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Logout'),
-                onTap: _showLogoutDialog,
-              ),
-              const Divider(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -148,5 +167,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void dispose() {
     _refreshController.dispose();
     super.dispose();
+  }
+}
+
+class BackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.blue.shade50;
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    canvas.drawRect(rect, paint);
+
+    paint.color = Colors.blue.shade100;
+    canvas.drawCircle(
+        Offset(size.width * 0.25, size.height * 0.25), 150, paint);
+    canvas.drawCircle(
+        Offset(size.width * 0.75, size.height * 0.75), 200, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }

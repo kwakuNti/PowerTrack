@@ -3,6 +3,7 @@ import 'models/meter_details.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'enter_meter.dart';
 import 'payment.dart';
+import 'usagepage.dart'; // Import the UsagePage
 
 class MetersPage extends StatefulWidget {
   const MetersPage({super.key});
@@ -40,9 +41,6 @@ class _MetersPageState extends State<MetersPage> {
       body: SmartRefresher(
         controller: _refreshController,
         onRefresh: _onRefresh,
-        // appBar: AppBar(
-        //   automaticallyImplyLeading: false,
-        // ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -185,92 +183,102 @@ class _MetersPageState extends State<MetersPage> {
   }
 
   Widget _buildMeterCard(MeterDetails meterDetails) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8, // Make card wider
-      height: 220, // Adjust height to accommodate the button
-      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.blueGrey[800],
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: Offset(0, 5),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UsagePage(meterDetails: meterDetails),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  meterDetails.meterName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Meter Number: ${meterDetails.meterNumber}',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.8, // Make card wider
+        height: 220, // Adjust height to accommodate the button
+        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.blueGrey[800],
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: Offset(0, 5),
             ),
-            const Align(
-              alignment: Alignment.bottomRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.electric_meter, color: Colors.white70, size: 18),
-                  SizedBox(width: 5),
                   Text(
-                    'Meter Details',
-                    style: TextStyle(
+                    meterDetails.meterName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    'Meter Number: ${meterDetails.meterNumber}',
+                    style: const TextStyle(
                       color: Colors.white70,
-                      fontSize: 12,
+                      fontSize: 14,
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(
-                height: 10), // Add spacing between details and button
-            Align(
-              alignment: Alignment.bottomRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            PaymentPage(meterId: meterDetails.meterNumber)),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal, // Text color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              const Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.electric_meter, color: Colors.white70, size: 18),
+                    SizedBox(width: 5),
+                    Text(
+                      'Meter Details',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
-                child: const Text('Buy Credit'),
               ),
-            ),
-          ],
+              const SizedBox(
+                  height: 10), // Add spacing between details and button
+              Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentPage(meterId: meterDetails.meterNumber)),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.teal, // Text color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                  ),
+                  child: const Text('Buy Credit'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

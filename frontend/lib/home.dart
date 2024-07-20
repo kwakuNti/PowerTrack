@@ -52,6 +52,15 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.notification_add_rounded),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            },
+          ),
         ],
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
