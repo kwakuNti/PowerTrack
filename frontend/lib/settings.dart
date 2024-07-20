@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'transaction.dart';
 import '../models/meter_details.dart'; // Import the model
-import 'home.dart';
+import 'feedback.dart';
 import 'manage_card.dart';
 import 'profile.dart';
 
@@ -154,6 +153,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: _showLogoutDialog,
                   ),
                   const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.error),
+                    title: Text(
+                      'Report Issue',
+                      style: GoogleFonts.poppins(),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FeedbackPage()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
