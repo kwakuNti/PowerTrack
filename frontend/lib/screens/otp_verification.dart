@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'signup.dart';
 import 'home.dart';
 import 'dart:convert';
+import 'login.dart';
 import 'package:http/http.dart' as http;
 
 class OTPVerificationPage extends StatefulWidget {
@@ -67,7 +68,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
         first_name != null &&
         last_name != null) {
       final response = await http.post(
-        Uri.parse('http://localhost/PowerTrack/backend/users'),
+        Uri.parse('http://4.231.236.2/PowerTrack/backend/users'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
@@ -89,7 +90,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
           if (authProvider.user != null) {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => const LoginPage()),
               (route) => false,
             );
           } else {

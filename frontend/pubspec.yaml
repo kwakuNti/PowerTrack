@@ -50,6 +50,8 @@ dependencies:
   google_fonts: ^6.2.1  
   url_launcher: ^6.0.10
   provider:
+  quickalert: ^1.1.0
+  shared_preferences: ^2.2.3
 
 
 

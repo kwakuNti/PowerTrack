@@ -16,9 +16,6 @@ class User {
     required this.lastName,
     required this.username,
     required this.email,
-    // required this.gender,
-    //required this.dob,
-    required this.bio,
     required this.profileImage,
   });
 
@@ -30,9 +27,6 @@ class User {
           lastName: json['lastname'],
           username: json['username'],
           email: json['email'],
-          // gender: json['gender'],
-          //dob: DateTime.parse(json['dob']),
-          bio: json['bio'],
           profileImage: json['profile_Image']);
     } catch (e) {
       throw Exception(e);
@@ -46,9 +40,6 @@ class User {
       'lastname': lastName,
       'username': username,
       'email': email,
-      //'gender': gender,
-      // 'dob': dob.toIso8601String(),
-      'bio': bio,
       'profile_Image': profileImage
     };
   }
