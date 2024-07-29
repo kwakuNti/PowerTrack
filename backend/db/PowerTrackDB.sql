@@ -7,16 +7,16 @@ CREATE DATABASE PowerTrackDB;
 -- Use the newly created database
 USE PowerTrackDB;
 
--- Create Users table
+-- Create Users table with profile_image column
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    profile_image VARCHAR(255), -- Column to store profile image URL or file path
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Create Meters table
 CREATE TABLE meters (

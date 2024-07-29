@@ -8,18 +8,14 @@ class User extends Model
     protected $otherTable = 'tokens';
 
     // Create single user
-    public function createUser($firstname, $lastname, $email, $password, $dob)
+    public function createUser($first_name, $last_name, $email, $password)
     {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $verified = true;
         $data = [
-            'firstName' => $firstname,
-            'lastName' => $lastname,
-            'username' => $firstname,
+            'first_name' => $first_name,
+            'last_name' => $last_name,
             'email' => $email,
             'password' => $password_hash,
-            'dob' => $dob,
-            'verified' => $verified,
         ];
 
         return $this->insert($data);
@@ -35,7 +31,7 @@ class User extends Model
     // Fetch all users in the system with a specific set of column details (attributes)
     public function fetchAll()
     {
-        $sql = "SELECT userId, firstName, lastName, username, bio, profile_Image
+        $sql = "SELECT user_id, first_name, last_name, profile_image
                 FROM {$this->table}";
 
         $stmt = $this->pdo->query($sql);
@@ -45,7 +41,7 @@ class User extends Model
     // Find a user by their id
     public function findProfileById($id)
     {
-        $sql = "SELECT userId,username, firstname, lastname, profile_Image, bio, email FROM " . $this->table . " WHERE userId = :id";
+        $sql = "SELECT userId,username, firstname, lastname, profile_Image, email FROM " . $this->table . " WHERE user_id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -53,14 +49,14 @@ class User extends Model
 
     // Update user profile image
     public function updateProfileImage($id, $imagePath){
-        $sql = "UPDATE {$this->table} SET profile_Image = :profile_Image WHERE userId = :id";
+        $sql = "UPDATE {$this->table} SET profile_Image = :profile_Image WHERE user_id = :id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(['profile_Image' => $imagePath, 'id' => $id]);
     }
 
     // Store the user's login token in the database
     public function storeToken($id, $token){
-        $sql = "INSERT INTO {$this->otherTable} (userId, token) VALUES (:id, :token)
+        $sql = "INSERT INTO {$this->otherTable} (user_id, token) VALUES (:id, :token)
             ON DUPLICATE KEY UPDATE
             token = VALUES(token)";
         
@@ -70,14 +66,12 @@ class User extends Model
 
     // Setup the user's profile with bio and username
     public function updateProfile($id, $username, $bio, $gender){
-        $sql = "UPDATE {$this->table} SET username = :username, bio = :bio, gender = :gender WHERE userId = :id";
+        $sql = "UPDATE {$this->table} SET bio = :bio WHERE user_id = :id";
     
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
                     'id' => $id,
                     'username' => $username,
-                    'bio' => $bio,
-                    'gender' => $gender
                 ]);
     }
 
@@ -90,25 +84,25 @@ class User extends Model
         return $stmt->execute(['password' => $password_hash, 'email' => $email]);
     }
 
-    public function changePassword($userId, $oldPassword, $newPassword)
+    public function changePassword($user_id, $oldPassword, $newPassword)
     {
-        $user = $this->findById($userId);
+        $user = $this->findById($user_id);
         
         if ($user && password_verify($oldPassword, $user['password'])) {
             $password_hash = password_hash($newPassword, PASSWORD_DEFAULT);
-            $sql = "UPDATE {$this->table} SET password = :password WHERE userId = :userId";
+            $sql = "UPDATE {$this->table} SET password = :password WHERE user_id = :user_id";
             $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute(['password' => $password_hash, 'userId' => $userId]);
+            return $stmt->execute(['password' => $password_hash, 'user_id' => $user_id]);
         } else {
             return false; // Invalid current password
         }
     }
     
-    public function findById($userId)
+    public function findById($user_id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE userId = :userId";
+        $sql = "SELECT * FROM {$this->table} WHERE user_id = :user_id";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['userId' => $userId]);
+        $stmt->execute(['user_id' => $user_id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     

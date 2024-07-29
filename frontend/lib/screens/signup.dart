@@ -38,8 +38,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
       // Store registration details in AuthProvider
       authProvider.setRegistrationDetails({
-        'firstName': _firstNameController.text,
-        'lastName': _lastNameController.text,
+        'first_name': _firstNameController.text,
+        'lastame': _lastNameController.text,
         'email': _emailController.text,
         'password': _passwordController.text,
       });

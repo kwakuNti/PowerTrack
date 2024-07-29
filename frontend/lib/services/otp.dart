@@ -17,7 +17,7 @@ class OTPService {
       emailPort: EmailPort.port587,
       secureType: SecureType.tls,
       username: 'cliffco24@gmail.com',
-      password: 'fonk sufp yrpk alif',
+      password: 'nzqo jtlf kuau xtus',
     );
 
     // Custom email template with your specified colors and branding

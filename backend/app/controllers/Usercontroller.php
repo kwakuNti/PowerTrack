@@ -20,11 +20,10 @@ class UserController
         try {
 
             $this->userModel->createUser(
-                $data['firstname'],
-                $data['lastname'],
+                $data['first_name'],
+                $data['last_name'],
                 $data['email'],
                 $data['password'],
-                $data['dob'],
             );
 
             return ['success' => true];
@@ -61,11 +60,11 @@ class UserController
                 $token = bin2hex(random_bytes(16));
 
                 // Store token in database
-                $this->userModel->storeToken($db_details['userId'], $token);
+                $this->userModel->storeToken($db_details['user_id'], $token);
 
                 return [
                     "success" => true, 
-                    "id" => $db_details['userId'],
+                    "id" => $db_details['user_id'],
                     "token" => $token,
                     "socket-channel" => "ws://localhost:8080/chat"
                 ];
@@ -106,10 +105,10 @@ class UserController
         }
     }
 
-    public function getUserById($userId)
+    public function getUserById($user_id)
     {
         try {
-            $result = $this->userModel->findProfileById($userId);
+            $result = $this->userModel->findProfileById($user_id);
             if ($result) {
                 return $result;
             } else {

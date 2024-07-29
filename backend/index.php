@@ -10,9 +10,6 @@ header('content-Type: application/json');
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/app/controllers/userController.php';
-require_once __DIR__ . '/app/controllers/likeController.php';
-require_once __DIR__ . '/app/controllers/InterestController.php';
-require_once __DIR__ . '/app/controllers/chatController.php';
 require_once __DIR__ . '/app/controllers/ForgetPasswordController.php';
 require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 require_once __DIR__ . '/app/controllers/changePasswordController.php';
@@ -24,7 +21,7 @@ $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 $router = new AltoRouter();
-$router->setBasePath('/Powertrack/backend');
+$router->setBasePath('/PowerTrack/backend');
 
 // create database and pdo
 $database = new Database();
@@ -44,13 +41,11 @@ $router->map('POST', '/users', function () use ($userController) {
 
     // validate data
     ValidationMiddleWare::handle($data, [
-        'firstname' => 'string',
-        'lastname' => 'string',
-        'username' => 'string',
+        'first_name' => 'string',
+        'last_name' => 'string',
         'email' => 'email',
         'password' => 'password',
         'confirm_password' => 'confirm_password',
-        'dob' => 'string',
     ]);
 
     echo json_encode($userController->createUser($data));
@@ -70,10 +65,10 @@ $router->map('POST', '/users/login', function () use ($userController) {
     echo json_encode($userController->login($data));
 });
 
-// Catering for fetching user details by userId
-$router->map('GET', '/users/[*:userId]', function ($userId) use ($userController) {
-    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
-    echo json_encode($userController->getUserById($userId));
+// Catering for fetching user details by user_id
+$router->map('GET', '/users/[*:user_id]', function ($user_id) use ($userController) {
+    ValidationMiddleWare::handle(['user_id' => $user_id], ['user_id' => 'integer']);
+    echo json_encode($userController->getUserById($user_id));
 });
 
 // Cater for fetching all users
@@ -89,7 +84,7 @@ $router->map('POST', '/profile', function () use ($userController) {
 
     //validate data
     ValidationMiddleWare::handle($data, [
-        'userId' => 'integer',
+        'user_id' => 'integer',
         'username' => 'string',
         'gender' => 'string',
         'bio' => 'string'
@@ -97,7 +92,7 @@ $router->map('POST', '/profile', function () use ($userController) {
 
     echo json_encode(
         $userController->createProfile(
-            $data['userId'], $data['username'], 
+            $data['user_id'], $data['username'], 
             $data['gender'], $data['bio']
         )
     );
@@ -106,14 +101,14 @@ $router->map('POST', '/profile', function () use ($userController) {
 
 
 // Catering for fetching the matches of a user
-$router->map('POST', '/upload/[*:userId]', function ($userId) use ($userController) {
+$router->map('POST', '/upload/[*:user_id]', function ($user_id) use ($userController) {
 
     $file = $_FILES['profile_image'];
     
-    ValidationMiddleWare::handle(["userId" => $userId], ["userId" => "integer"]);
+    ValidationMiddleWare::handle(["user_id" => $user_id], ["user_id" => "integer"]);
     ValidationMiddleWare::handleImage($file);
     
-    echo json_encode($userController->uploadProfileImage($userId));
+    echo json_encode($userController->uploadProfileImage($user_id));
 });
 
 // catering for a user forgetting and reseting their password
@@ -127,7 +122,7 @@ $router->map('POST', '/users/reset_password', function () use ($forgetPasswordCo
 $router->map('POST', '/users/change_password', function () use ($changePasswordController) {
     $data = json_decode(file_get_contents('php://input'), true);
     ValidationMiddleWare::handle($data, [
-        'userId' => 'integer',
+        'user_id' => 'integer',
         'oldPassword' => 'string',
         'newPassword' => 'string',
         'confirmPassword' => 'string'
