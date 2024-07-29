@@ -3,20 +3,21 @@ import 'package:http/http.dart' as http;
 
 class AuthService {
   // Replace with your actual backend URL
-  final String baseUrl = "http://localhost/Powertrack/backend";
+  final String baseUrl = "http://localhost/PowerTrack/backend";
 
   // Register users
-  Future<Map<String, dynamic>> register(String firstName, String lastName,
-      String email, String password) async {
+  Future<Map<String, dynamic>> register(
+      String firstName, String lastName, String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/users'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'firstName': firstName,
-        'lastName': lastName,
+        'first_name': firstName,
+        'last_name': lastName,
         'email': email,
         'password': password,
-        'confirm_password': password, // Assuming backend needs this field for confirmation
+        'confirm_password':
+            password, // Assuming backend needs this field for confirmation
       }),
     );
 
@@ -25,7 +26,8 @@ class AuthService {
     } else if (response.statusCode == 500 || response.statusCode == 503) {
       throw Exception("Server error");
     } else {
-      return jsonDecode(response.body); // Handle other responses (e.g., validation errors)
+      return jsonDecode(
+          response.body); // Handle other responses (e.g., validation errors)
     }
   }
 
@@ -42,7 +44,8 @@ class AuthService {
     } else if (response.statusCode == 500 || response.statusCode == 503) {
       throw Exception("Server error");
     } else {
-      return jsonDecode(response.body); // Handle other responses (e.g., invalid credentials)
+      return jsonDecode(
+          response.body); // Handle other responses (e.g., invalid credentials)
     }
   }
 

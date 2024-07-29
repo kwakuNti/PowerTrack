@@ -76,8 +76,8 @@ class AuthProvider with ChangeNotifier {
     setLoading(true);
     try {
       final registerResponse = await _authService.register(
-        _registrationDetails['firstName']!,
-        _registrationDetails['lastName']!,
+        _registrationDetails['first_name']!,
+        _registrationDetails['last_name']!,
         _registrationDetails['email']!,
         _registrationDetails['password']!,
       );

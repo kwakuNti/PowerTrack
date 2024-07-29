@@ -4,6 +4,8 @@ import 'package:frontend/services/otp.dart';
 import 'package:provider/provider.dart';
 import 'signup.dart';
 import 'home.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class OTPVerificationPage extends StatefulWidget {
   const OTPVerificationPage({super.key});
@@ -13,7 +15,8 @@ class OTPVerificationPage extends StatefulWidget {
 }
 
 class _OTPVerificationPageState extends State<OTPVerificationPage> {
-  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> _otpControllers =
+      List.generate(6, (index) => TextEditingController());
   bool _isLoading = false;
 
   @override
@@ -33,13 +36,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
     bool isValidOTP = await OTPService.verifyOTP(otp);
 
     if (isValidOTP) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.registerUser();
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-        (route) => false,
-      );
+      await _registerAndLogin();
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
@@ -50,6 +47,63 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  Future<void> _registerAndLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final email = authProvider.registrationDetails['email'];
+    final first_name = authProvider.registrationDetails['first_name'];
+    final last_name = authProvider.registrationDetails['last_name'];
+    final password = authProvider.registrationDetails['password'];
+    final confirmPassword =
+        authProvider.registrationDetails['confirm_password'];
+
+    print('Attempting registration with email: $email');
+    print(
+        'Registration details - first_name: $first_name, last_name: $last_name, password: $password, confirm_password: $confirmPassword');
+
+    if (email != null &&
+        password != null &&
+        first_name != null &&
+        last_name != null) {
+      final response = await http.post(
+        Uri.parse('http://localhost/PowerTrack/backend/users'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'confirm_password': confirmPassword,
+          'first_name': first_name,
+          'last_name': last_name,
+        }),
+      );
+
+      print('Registration response status: ${response.statusCode}');
+      print('Registration response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['success']) {
+          // Registration successful, login the user
+          await authProvider.login(email, password);
+          if (authProvider.user != null) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+              (route) => false,
+            );
+          } else {
+            print('Login failed!');
+          }
+        } else {
+          print('Registration failed!');
+        }
+      } else {
+        print('Registration request failed!');
+      }
+    } else {
+      print('Required registration details are missing!');
+    }
   }
 
   @override
@@ -118,14 +172,17 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Verify', style: TextStyle(color: Colors.white)),
+                      : const Text('Verify',
+                          style: TextStyle(color: Colors.white)),
                 ),
               ),
               const SizedBox(height: 20),
               TextButton(
-                onPressed: _isLoading ? null : () {
-                  // Add functionality to resend OTP here
-                },
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        // Add functionality to resend OTP here
+                      },
                 child: const Text(
                   'Didn’t receive the code?',
                   style: TextStyle(fontSize: 16, color: Colors.blue),

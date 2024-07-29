@@ -39,9 +39,10 @@ class _SignUpPageState extends State<SignUpPage> {
       // Store registration details in AuthProvider
       authProvider.setRegistrationDetails({
         'first_name': _firstNameController.text,
-        'lastame': _lastNameController.text,
+        'last_name': _lastNameController.text,
         'email': _emailController.text,
         'password': _passwordController.text,
+        'confirm_password': _confirmPasswordController.text,
       });
 
       // Send OTP
@@ -163,10 +164,12 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 controller: _firstNameController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: Color(0xFF828282), width: 0.5),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF828282), width: 0.5),
                   ),
                   labelText: 'First name',
                   labelStyle: const TextStyle(
@@ -182,10 +185,12 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 controller: _lastNameController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: Color(0xFF828282), width: 0.5),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF828282), width: 0.5),
                   ),
                   labelText: 'Last name',
                   labelStyle: const TextStyle(
@@ -201,10 +206,12 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: Color(0xFF828282), width: 0.5),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF828282), width: 0.5),
                   ),
                   labelText: 'Email address',
                   labelStyle: const TextStyle(
@@ -221,10 +228,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: Color(0xFF828282), width: 0.5),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF828282), width: 0.5),
                   ),
                   labelText: 'Password',
                   labelStyle: const TextStyle(
@@ -241,10 +250,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 controller: _confirmPasswordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: Color(0xFF828282), width: 0.5),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF828282), width: 0.5),
                   ),
                   labelText: 'Confirm Password',
                   labelStyle: const TextStyle(
@@ -273,7 +284,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 20),
                   ),
-                  child: const Text('Create account', style: TextStyle(color: Colors.white)),
+                  child: const Text('Create account',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -281,7 +293,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
                   );
                 },
                 child: const Text(

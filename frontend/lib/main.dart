@@ -3,14 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 // import 'providers/user_provider.dart';
-import 'services/otp.dart'; 
+import 'services/otp.dart';
 
 import 'screens/splash_screen.dart'; // Import the splash screen
 
 // Import the login screen
 
 void main() {
-    OTPService.configure(); // Configure the OTP service
+  OTPService.configure(); // Configure the OTP service
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => AuthProvider()),
