@@ -8,8 +8,8 @@
       }
     ],
     "require": {
-      "altorouter/altorouter": "^2.0",
-      "vlucas/phpdotenv": "^5.4"
+      "vlucas/phpdotenv": "^5.4",
+        "phpmailer/phpmailer": "*",
+        "altorouter/altorouter": "*"
     }
   }
-  

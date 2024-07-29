@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
+// import 'providers/user_provider.dart';
+import 'services/otp.dart'; 
 
-import 'splash_screen.dart'; // Import the splash screen
+import 'screens/splash_screen.dart'; // Import the splash screen
 
 // Import the login screen
 
 void main() {
-  runApp(const MyApp());
+    OTPService.configure(); // Configure the OTP service
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => AuthProvider()),
+      // ChangeNotifierProvider(create: (_) => UserProvider()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

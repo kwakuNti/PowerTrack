@@ -1,10 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/signup.dart';
-
+import 'package:frontend/providers/auth_provider.dart';
+import 'package:frontend/services/otp.dart';
+import 'package:provider/provider.dart';
+import 'signup.dart';
 import 'home.dart';
 
-class OTPVerificationPage extends StatelessWidget {
+class OTPVerificationPage extends StatefulWidget {
   const OTPVerificationPage({super.key});
+
+  @override
+  State<OTPVerificationPage> createState() => _OTPVerificationPageState();
+}
+
+class _OTPVerificationPageState extends State<OTPVerificationPage> {
+  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    for (var controller in _otpControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _verifyOTP() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String otp = _otpControllers.map((controller) => controller.text).join();
+    bool isValidOTP = await OTPService.verifyOTP(otp);
+
+    if (isValidOTP) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.registerUser();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (route) => false,
+      );
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid OTP. Please try again.')),
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,12 +104,7 @@ class OTPVerificationPage extends StatelessWidget {
                 width: 343,
                 height: 60,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                    ); // Add login functionality here
-                  },
+                  onPressed: _isLoading ? null : _verifyOTP,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4169E1),
                     shape: RoundedRectangleBorder(
@@ -75,13 +116,14 @@ class OTPVerificationPage extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 20),
                   ),
-                  child: const Text('Verify',
-                      style: TextStyle(color: Colors.white)),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Verify', style: TextStyle(color: Colors.white)),
                 ),
               ),
               const SizedBox(height: 20),
               TextButton(
-                onPressed: () {
+                onPressed: _isLoading ? null : () {
                   // Add functionality to resend OTP here
                 },
                 child: const Text(
@@ -89,7 +131,7 @@ class OTPVerificationPage extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: Colors.blue),
                 ),
               ),
-              const SizedBox(height: 20), // Add some space at the bottom
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -101,6 +143,7 @@ class OTPVerificationPage extends StatelessWidget {
     return SizedBox(
       width: 50,
       child: TextField(
+        controller: _otpControllers[index],
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,

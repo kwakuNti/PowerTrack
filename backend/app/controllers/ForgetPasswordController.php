@@ -5,7 +5,6 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/../models/user.php';
-// require '/xampp/htdocs/N.A.C.K/backend/vendor/autoload.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Dotenv\Dotenv;

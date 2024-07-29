@@ -5,24 +5,7 @@ header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, PATCH, OPTIONS');
 header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 header('content-Type: application/json');
-// require_once __DIR__.'/vendor/autoload.php';
 
-// // Load environment variables from .env file
-// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-// $dotenv->load();
-
-// $router = new AltoRouter();
-// $router->setBasePath('/N.A.C.K/backend');
-
-// // Include your route definitions from app/routes/api.php
-// require __DIR__ . '/app/routes/api.php';
-
-// // Define a route
-// // $router->map('GET', '/', function() {
-// //     // Send a 200 status code
-// //     http_response_code(200);
-// //     echo "OK";
-// // });
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config/database.php';
@@ -41,16 +24,13 @@ $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 $router = new AltoRouter();
-$router->setBasePath('/N.A.C.K/backend');
+$router->setBasePath('/Powertrack/backend');
 
 // create database and pdo
 $database = new Database();
 $pdo = $database->getPdo();
 
 $userController = new UserController($pdo);
-$likeController = new LikeController($pdo);
-$interestController = new InterestController($pdo);
-$chatController = new ChatController($pdo);
 $forgetPasswordController = new ForgetPasswordController($pdo);
 $changePasswordController = new ChangePasswordController($pdo);
 
@@ -102,20 +82,6 @@ $router->map('GET', '/users', function () use ($userController) {
     echo json_encode($userController->getAllUsers());
 });
 
-// Cater for one user liking another user
-$router->map('POST', '/users/like', function () use ($likeController) {
-
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    //validate data
-    ValidationMiddleWare::handle($data, [
-        'userId' => 'integer',
-        'liked_userId' => 'integer'
-    ]);
-
-    echo json_encode($likeController->likeUser($data));
-});
-
 // Cater for user creating thier profile
 $router->map('POST', '/profile', function () use ($userController) {
 
@@ -137,61 +103,7 @@ $router->map('POST', '/profile', function () use ($userController) {
     );
 });
 
-// Catering for fetching the matches of a user
-$router->map('GET', '/matches/[*:userId]', function ($userId) use ($likeController) {
 
-    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
-
-    echo json_encode($likeController->getMatches($userId));
-});
-
-// Routes for interests
-$router->map('GET', '/interests', function () use ($interestController) {
-    echo json_encode($interestController->getAllInterests());
-});
-
-
-// Routes for user interests
-$router->map('GET', '/interests/[*:userId]', function ($userId) use ($interestController) {
-    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
-    echo json_encode($interestController->getUserInterests($userId));
-});
-
-$router->map('POST', '/users/interests', function () use ($interestController) {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    // Validate data
-    ValidationMiddleWare::handle($data, [
-        'userId' => 'integer',
-        'interestId' => 'integer',
-    ]);
-
-    echo json_encode($interestController->addUserInterest($data));
-});
-
-// Routes for interests
-$router->map('GET', '/interests', function () use ($interestController) {
-    echo json_encode($interestController->getAllInterests());
-});
-
-
-// Routes for user interests
-$router->map('GET', '/interests/[*:userId]', function ($userId) use ($interestController) {
-    ValidationMiddleWare::handle(['userId' => $userId], ['userId' => 'integer']);
-    echo json_encode($interestController->getUserInterests($userId));
-});
-
-$router->map('POST', '/users/interests', function () use ($interestController) {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    // Validate data
-    ValidationMiddleWare::handle($data, [
-        'userId' => 'integer',
-        'interestId' => 'integer',
-    ]);
-
-    echo json_encode($interestController->addUserInterest($data));
-});
 
 // Catering for fetching the matches of a user
 $router->map('POST', '/upload/[*:userId]', function ($userId) use ($userController) {
@@ -202,23 +114,6 @@ $router->map('POST', '/upload/[*:userId]', function ($userId) use ($userControll
     ValidationMiddleWare::handleImage($file);
     
     echo json_encode($userController->uploadProfileImage($userId));
-});
-
-// catering for fetching the chats between two users
-$router->map('GET', '/chat/[i:userId1]/[i:userId2]', function($userId1, $userId2) use ($chatController) {
-
-    ValidationMiddleWare::handle(
-        [
-            "userId1" => $userId1, 
-            "userId2" => $userId2
-        ], 
-        [
-            "userId1" => "integer", 
-            "userId2" => "integer"
-        ]
-    );
-
-    echo json_encode($chatController->getChatHistory($userId1, $userId2));
 });
 
 // catering for a user forgetting and reseting their password

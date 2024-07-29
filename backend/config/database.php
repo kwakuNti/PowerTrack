@@ -3,7 +3,7 @@
 
     use Dotenv\Dotenv;
     
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/..'); // Assuming .env is in the project root
+    $dotenv = Dotenv::createImmutable(__DIR__ . '\..'); // Assuming .env is in the project root
     $dotenv->load();
 
 /// Database class to handle connection to database

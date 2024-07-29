@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'models/meter_details.dart';
+import '/models/meter_details.dart';
 
 class EnterMeterNumberPage extends StatefulWidget {
   final Function(MeterDetails) onAddMeter;
