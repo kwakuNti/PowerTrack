@@ -1,4 +1,3 @@
-<?php
 class Meter {
   final int meterId;
   final int userId;
