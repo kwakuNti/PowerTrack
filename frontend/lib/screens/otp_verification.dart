@@ -68,7 +68,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
         first_name != null &&
         last_name != null) {
       final response = await http.post(
-        Uri.parse('http://4.231.236.2/PowerTrack/backend/users'),
+        Uri.parse('http://16.171.150.101/PowerTrack/backend/users'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,

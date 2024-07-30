@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class AuthService {
   // Replace with your actual backend URL
-  final String baseUrl = "http://localhost/PowerTrack/backend";
+  final String baseUrl = "http://16.171.150.101/PowerTrack/backend";
 
   // Register users
   Future<Map<String, dynamic>> register(
@@ -38,6 +38,8 @@ class AuthService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
+    print('Login response status: ${response.statusCode}');
+    print('Login response body: ${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -52,9 +54,9 @@ class AuthService {
   // TODO: Create logout method
 
   // Get the profile details of a user
-  Future<Map<String, dynamic>> getProfile(int userId) async {
+  Future<Map<String, dynamic>> getProfile(int user_id) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/users/$userId'),
+      Uri.parse('$baseUrl/users/$user_id'),
       headers: {'Content-Type': 'application/json'},
     );
 

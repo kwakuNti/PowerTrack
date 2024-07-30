@@ -1,33 +1,28 @@
 /// Class to model a user
 class User {
-  int userId;
-  String firstName;
-  String lastName;
-  String username;
+  int user_id;
+  String first_name;
+  String last_name;
   String email;
-  // String gender;
-  // DateTime dob;
   String? bio;
-  String? profileImage;
+  String? profile_image;
 
   User({
-    required this.userId,
-    required this.firstName,
-    required this.lastName,
-    required this.username,
+    required this.user_id,
+    required this.first_name,
+    required this.last_name,
     required this.email,
-    required this.profileImage,
+    required this.profile_image,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     try {
       return User(
-          userId: json['userId'],
-          firstName: json['firstname'],
-          lastName: json['lastname'],
-          username: json['username'],
+          user_id: json['user_id'],
+          first_name: json['first_name'],
+          last_name: json['last_name'],
           email: json['email'],
-          profileImage: json['profile_Image']);
+          profile_image: json['profile_image']);
     } catch (e) {
       throw Exception(e);
     }
@@ -35,12 +30,11 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
-      'firstname': firstName,
-      'lastname': lastName,
-      'username': username,
+      'user_id': user_id,
+      'firstname': first_name,
+      'lastname': last_name,
       'email': email,
-      'profile_Image': profileImage
+      'profile_Image': profile_image
     };
   }
 }
