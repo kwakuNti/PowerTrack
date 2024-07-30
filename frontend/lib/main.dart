@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/home.dart';
+import 'package:frontend/screens/signup.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/auth_provider.dart';
 import 'services/otp.dart';
 import 'screens/login_screen.dart';
@@ -91,17 +95,92 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final LocalAuthentication auth = LocalAuthentication();
+
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
+    _checkLoginStatus();
   }
 
-  _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 5));
-    if (!mounted) return; // Check if the widget is still in the tree
-    Navigator.of(context).pushReplacement(
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email');
+    final password = prefs.getString('password');
+    final biometricEnabled = prefs.getBool('biometricEnabled') ?? false;
+
+    print('Stored email: $email');
+    print('Stored password: $password');
+    print('Biometric enabled: $biometricEnabled');
+
+    if (email != null && password != null) {
+      if (biometricEnabled) {
+        print('Attempting biometric authentication...');
+        bool authenticated = await _authenticateWithBiometrics();
+        if (authenticated) {
+          print('Biometric authentication successful');
+          _login(email, password);
+        } else {
+          print('Biometric authentication failed');
+          _navigateToLogin();
+        }
+      } else {
+        print('Logging in with stored credentials...');
+        _login(email, password);
+      }
+    } else {
+      print('No stored credentials found');
+      _navigateToWelcome();
+    }
+  }
+
+  Future<bool> _authenticateWithBiometrics() async {
+    try {
+      return await auth.authenticate(
+        localizedReason: 'Please authenticate to continue',
+        options: const AuthenticationOptions(
+          useErrorDialogs: true,
+          stickyAuth: true,
+        ),
+      );
+    } catch (e) {
+      print('Error during biometric authentication: $e');
+      return false;
+    }
+  }
+
+  void _login(String email, String password) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    print('Attempting to log in user with email: $email');
+    await authProvider.login(email, password);
+    if (authProvider.loginSuccess == true) {
+      print('Login successful');
+      if (!mounted) return; // Check if the widget is still in the widget tree
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } else {
+      print('Login failed: ${authProvider.errorMessage}');
+      _navigateToLogin();
+    }
+  }
+
+  void _navigateToLogin() {
+    print('Navigating to LoginScreen');
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
+  void _navigateToWelcome() {
+    print('Navigating to WelcomeScreen');
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const SignUpPage()),
     );
   }
 
