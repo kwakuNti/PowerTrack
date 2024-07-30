@@ -33,21 +33,26 @@ class AuthService {
 
   // Log users into the application
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/users/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-    print('Login response status: ${response.statusCode}');
-    print('Login response body: ${response.body}');
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/users/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
+      print('Login response status: ${response.statusCode}');
+      print('Login response body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else if (response.statusCode == 500 || response.statusCode == 503) {
-      throw Exception("Server error");
-    } else {
-      return jsonDecode(
-          response.body); // Handle other responses (e.g., invalid credentials)
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 500 || response.statusCode == 503) {
+        throw Exception("Server error");
+      } else {
+        return jsonDecode(response
+            .body); // Handle other responses (e.g., invalid credentials)
+      }
+    } catch (e) {
+      print('Error during login: $e');
+      throw Exception('Failed to login: $e');
     }
   }
 
@@ -55,17 +60,24 @@ class AuthService {
 
   // Get the profile details of a user
   Future<Map<String, dynamic>> getProfile(int user_id) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/users/$user_id'),
-      headers: {'Content-Type': 'application/json'},
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/users/$user_id'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      print('GetProfile response status: ${response.statusCode}');
+      print('GetProfile response body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else if (response.statusCode == 500 || response.statusCode == 503) {
-      throw Exception("Server error");
-    } else {
-      throw Exception("Failed to get profile");
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 500 || response.statusCode == 503) {
+        throw Exception("Server error");
+      } else {
+        throw Exception("Failed to get profile");
+      }
+    } catch (e) {
+      print('Error during getProfile: $e');
+      throw Exception('Failed to get profile: $e');
     }
   }
 }

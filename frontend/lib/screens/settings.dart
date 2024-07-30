@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/meter_details.dart'; // Import the model
 import 'feedback.dart';
 import 'manage_card.dart';
@@ -20,16 +21,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  final MeterDetails meterDetails = MeterDetails(
-    meterName: 'Sample Meter 1',
-    meterNumber: '123456',
-    customerName: 'John Doe',
-    customerNumber: '0987654321',
-    address: '123 Main St',
-  );
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _biometricsEnabled = prefs.getBool('biometricEnabled') ?? false;
+    });
+  }
+
+  Future<void> _updateBiometricEnabled(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('biometricEnabled', value);
+    setState(() {
+      _biometricsEnabled = value;
+    });
+  }
+
+  Future<void> _authenticateWithBiometrics() async {
+    try {
+      final bool canCheckBiometrics = await auth.canCheckBiometrics;
+      final List<BiometricType> availableBiometrics =
+          await auth.getAvailableBiometrics();
+
+      if (canCheckBiometrics && availableBiometrics.isNotEmpty) {
+        final bool authenticated = await auth.authenticate(
+          localizedReason: 'Please authenticate to enable biometrics',
+          options: const AuthenticationOptions(
+            useErrorDialogs: true,
+            stickyAuth: true,
+          ),
+        );
+        if (authenticated) {
+          _updateBiometricEnabled(true);
+        } else {
+          setState(() {
+            _biometricsEnabled = false;
+          });
+        }
+      } else {
+        _showBiometricSetupDialog();
+        setState(() {
+          _biometricsEnabled = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        _biometricsEnabled = false;
+      });
+    }
+  }
+
+  void _showBiometricSetupDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Biometrics Not Set Up'),
+          content: const Text(
+              'Biometric authentication is not set up on this device. Please set it up in your device settings.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _onRefresh() async {
-    // Simulate fetching new data
     await Future.delayed(const Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
@@ -44,13 +113,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
                 // Add your logout logic here
               },
               child: const Text('Logout'),
@@ -59,20 +128,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       },
     );
-  }
-
-  void _toggleBiometrics(bool value) async {
-    bool canCheckBiometrics = await auth.canCheckBiometrics;
-    if (canCheckBiometrics) {
-      setState(() {
-        _biometricsEnabled = value;
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Biometric authentication is not available')),
-      );
-    }
   }
 
   @override
@@ -140,7 +195,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     trailing: Switch(
                       value: _biometricsEnabled,
-                      onChanged: _toggleBiometrics,
+                      onChanged: (bool value) {
+                        if (value) {
+                          _authenticateWithBiometrics();
+                        } else {
+                          _updateBiometricEnabled(value);
+                        }
+                      },
                     ),
                   ),
                   const Divider(),

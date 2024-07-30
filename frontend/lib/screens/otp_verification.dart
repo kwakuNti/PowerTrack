@@ -86,16 +86,11 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
         final responseBody = jsonDecode(response.body);
         if (responseBody['success']) {
           // Registration successful, login the user
-          await authProvider.login(email, password);
-          if (authProvider.user != null) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-              (route) => false,
-            );
-          } else {
-            print('Login failed!');
-          }
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+            (route) => false,
+          );
         } else {
           print('Registration failed!');
         }

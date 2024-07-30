@@ -1,78 +1,158 @@
-import 'package:flutter_test/flutter_test.dart';
-import '../lib/models/user.dart'; // Update the path accordingly
+// import 'package:flutter/material.dart';
+// import 'package:flutter_spinkit/flutter_spinkit.dart';
+// import 'package:frontend/providers/auth_provider.dart';
+// import 'package:local_auth/local_auth.dart';
+// import 'package:provider/provider.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'login_screen.dart'; // Import the login screen
+// import 'home.dart';
 
-void main() {
-  group('User Class Tests', () {
-    // Test data
-    final Map<String, dynamic> json = {
-      'user_id': 1,
-      'first_name': 'John',
-      'last_name': 'Doe',
-      'email': 'john.doe@example.com',
-      'profile_image': 'https://example.com/profile.jpg',
-    };
+// class SplashScreen extends StatefulWidget {
+//   const SplashScreen({super.key});
 
-    test('fromJson should create a User object from JSON', () {
-      final user = User.fromJson(json);
+//   @override
+//   State<SplashScreen> createState() => _SplashScreenState();
+// }
 
-      expect(user.user_id, 1);
-      expect(user.first_name, 'John');
-      expect(user.last_name, 'Doe');
-      expect(user.email, 'john.doe@example.com');
-      expect(user.profile_image, 'https://example.com/profile.jpg');
-    });
+// class _SplashScreenState extends State<SplashScreen> {
+//   final LocalAuthentication auth = LocalAuthentication();
 
-    test('toJson should create a JSON map from User object', () {
-      final user = User(
-        user_id: 1,
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john.doe@example.com',
-        profile_image: 'https://example.com/profile.jpg',
-      );
+//   @override
+//   void initState() {
+//     super.initState();
+//     _checkLoginStatus();
+//   }
 
-      final jsonResult = user.toJson();
+//   Future<void> _checkLoginStatus() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final email = prefs.getString('email');
+//     final password = prefs.getString('password');
+//     final biometricEnabled = prefs.getBool('biometricEnabled') ?? false;
 
-      expect(jsonResult['user_id'], 1);
-      expect(jsonResult['first_name'], 'John');
-      expect(jsonResult['last_name'], 'Doe');
-      expect(jsonResult['email'], 'john.doe@example.com');
-      expect(jsonResult['profile_image'], 'https://example.com/profile.jpg');
-    });
+//     print('Stored email: $email');
+//     print('Stored password: $password');
+//     print('Biometric enabled: $biometricEnabled');
 
-    test('fromJson should handle missing optional fields', () {
-      final jsonWithMissingFields = {
-        'user_id': 1,
-        'first_name': 'John',
-        'last_name': 'Doe',
-        'email': 'john.doe@example.com',
-      };
+//     if (email != null && password != null) {
+//       if (biometricEnabled) {
+//         print('Attempting biometric authentication...');
+//         bool authenticated = await _authenticateWithBiometrics();
+//         if (authenticated) {
+//           print('Biometric authentication successful');
+//           _login(email, password);
+//         } else {
+//           print('Biometric authentication failed');
+//           _navigateToLogin();
+//         }
+//       } else {
+//         print('Logging in with stored credentials...');
+//         _login(email, password);
+//       }
+//     } else {
+//       print('No stored credentials found');
+//       _navigateToWelcome();
+//     }
+//   }
 
-      final user = User.fromJson(jsonWithMissingFields);
+//   Future<bool> _authenticateWithBiometrics() async {
+//     try {
+//       return await auth.authenticate(
+//         localizedReason: 'Please authenticate to continue',
+//         options: const AuthenticationOptions(
+//           useErrorDialogs: true,
+//           stickyAuth: true,
+//         ),
+//       );
+//     } catch (e) {
+//       print('Error during biometric authentication: $e');
+//       return false;
+//     }
+//   }
 
-      expect(user.user_id, 1);
-      expect(user.first_name, 'John');
-      expect(user.last_name, 'Doe');
-      expect(user.email, 'john.doe@example.com');
-      expect(user.profile_image, null);
-    });
+//   void _login(String email, String password) async {
+//     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+//     print('Attempting to log in user with email: $email');
+//     await authProvider.login(email, password);
+//     if (authProvider.loginSuccess == true) {
+//       print('Login successful');
+//       if (!mounted) return; // Check if the widget is still in the widget tree
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(builder: (context) => const HomePage()),
+//       );
+//     } else {
+//       print('Login failed: ${authProvider.errorMessage}');
+//       _navigateToLogin();
+//     }
+//   }
 
-    test('toJson should handle null values for optional fields', () {
-      final user = User(
-        user_id: 1,
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john.doe@example.com',
-        profile_image: null,
-      );
+//   void _navigateToLogin() {
+//     print('Navigating to LoginScreen');
+//     if (!mounted) return;
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(builder: (context) => const LoginScreen()),
+//     );
+//   }
 
-      final jsonResult = user.toJson();
+//   void _navigateToWelcome() {
+//     print('Navigating to WelcomeScreen');
+//     if (!mounted) return;
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(builder: (context) => const LoginScreen()),
+//     );
+//   }
 
-      expect(jsonResult['user_id'], 1);
-      expect(jsonResult['first_name'], 'John');
-      expect(jsonResult['last_name'], 'Doe');
-      expect(jsonResult['email'], 'john.doe@example.com');
-      expect(jsonResult['profile_image'], null);
-    });
-  });
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [
+//               Color(0xFF2196F3), // Blue color
+//               Colors.white,
+//             ],
+//             begin: Alignment.topCenter,
+//             end: Alignment.bottomCenter,
+//           ),
+//         ),
+//         child: Center(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: <Widget>[
+//               const Text(
+//                 'PowerTrack',
+//                 style: TextStyle(
+//                   fontSize: 32,
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//               const SizedBox(height: 8),
+//               const Text(
+//                 'Manage your electric prepaid',
+//                 style: TextStyle(
+//                   fontSize: 16,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//               const SizedBox(height: 24),
+//               Image.asset(
+//                 'assets/splash.png', // Add your image asset here
+//                 width: 228,
+//                 height: 228,
+//               ),
+//               const SizedBox(height: 150),
+//               const SpinKitFadingCircle(
+//                 color: Colors.blue,
+//                 size: 50.0,
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
