@@ -1,10 +1,11 @@
 /// Class to model a user
+// ignore_for_file: non_constant_identifier_names
+
 class User {
   int user_id;
   String first_name;
   String last_name;
   String email;
-  String? bio;
   String? profile_image;
 
   User({
@@ -34,7 +35,7 @@ class User {
       'first_name': first_name,
       'last_name': last_name,
       'email': email,
-      'profile_Image': profile_image
+      'profile_image': profile_image
     };
   }
 }

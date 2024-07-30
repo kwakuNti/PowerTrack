@@ -72,12 +72,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _loginRequest(BuildContext context) async {
+    print('Starting login request...');
+
     if (_formKey.currentState?.validate() ?? false) {
+      print('Form is valid');
+
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      print('Attempting login with email: ${_emailController.text}');
 
       await authProvider.login(_emailController.text, _passwordController.text);
 
+      // Check the result of the login
       if (authProvider.loginSuccess == false) {
+        print('Login failed');
+
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
@@ -85,13 +94,16 @@ class _LoginPageState extends State<LoginPage> {
           text: "Wrong email or password",
         );
       } else {
-        await _storeCredentials(
-            _emailController.text, _passwordController.text);
+        print('Login successful');
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
+        print('Navigating to HomePage');
       }
+    } else {
+      print('Form is invalid');
     }
   }
 
