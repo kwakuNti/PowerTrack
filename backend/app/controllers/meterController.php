@@ -26,6 +26,10 @@ class MeterController {
         $stmt->execute();
         $meters = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        if (empty($meters)) {
+            return ['status' => 'error', 'message' => 'No meters found for the specified user ID'];
+        }
+
         return $meters;
     }
 }

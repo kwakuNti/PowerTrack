@@ -146,9 +146,16 @@ $router->map('POST', '/meters', function () use ($meterController) {
 // Get meters by user_id
 $router->map('GET', '/meters/[i:user_id]', function ($user_id) use ($meterController) {
     ValidationMiddleWare::handle(['user_id' => $user_id], ['user_id' => 'integer']);
-    echo json_encode($meterController->getMetersByUserId($user_id));
-});
+    $response = $meterController->getMetersByUserId($user_id);
+    
+    if ($response['status'] === 'error' && isset($response['message'])) {
+        http_response_code(404); // Not Found
+    } else {
+        http_response_code(200); // OK
+    }
 
+    echo json_encode($response);
+});
 
 
 
