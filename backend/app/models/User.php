@@ -41,7 +41,7 @@ class User extends Model
     // Find a user by their id
     public function findProfileById($id)
     {
-        $sql = "SELECT userId,username, firstname, lastname, profile_Image, email FROM " . $this->table . " WHERE user_id = :id";
+        $sql = "SELECT user_id, first_name, last_name, profile_image, email FROM " . $this->table . " WHERE user_id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -49,9 +49,9 @@ class User extends Model
 
     // Update user profile image
     public function updateProfileImage($id, $imagePath){
-        $sql = "UPDATE {$this->table} SET profile_Image = :profile_Image WHERE user_id = :id";
+        $sql = "UPDATE {$this->table} SET profile_image = :profile_image WHERE user_id = :id";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute(['profile_Image' => $imagePath, 'id' => $id]);
+        return $stmt->execute(['profile_image' => $imagePath, 'id' => $id]);
     }
 
     // Store the user's login token in the database

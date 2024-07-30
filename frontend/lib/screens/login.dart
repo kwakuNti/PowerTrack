@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 5),
               const Text(
                 'Login',
                 style: TextStyle(
@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
               const Text(
                 'Let’s get started!',
                 style: TextStyle(
@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
               const Spacer(),
               Align(
                 alignment: Alignment.bottomCenter,
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_isPasswordVisible,
@@ -187,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: 343,
                       height: 60,
@@ -210,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(color: Colors.white)),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -224,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(fontSize: 16, color: Colors.blue),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
