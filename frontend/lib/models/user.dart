@@ -19,13 +19,16 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     try {
       return User(
-          user_id: json['user_id'],
-          first_name: json['first_name'],
-          last_name: json['last_name'],
-          email: json['email'],
-          profile_image: json['profile_image']);
+        user_id: json['user_id'],
+        first_name: json['first_name'],
+        last_name: json['last_name'],
+        email: json['email'],
+        profile_image: json['profile_image'],
+      );
     } catch (e) {
-      throw Exception(e);
+      print('Error parsing User from JSON: $e');
+      print('JSON received: $json');
+      throw Exception('Failed to parse User from JSON: $e');
     }
   }
 
@@ -35,7 +38,7 @@ class User {
       'first_name': first_name,
       'last_name': last_name,
       'email': email,
-      'profile_image': profile_image
+      'profile_image': profile_image,
     };
   }
 }

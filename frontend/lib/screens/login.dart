@@ -20,10 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
 
   @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
   }
 
   String? _validateEmail(String? value) {
@@ -65,10 +63,22 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _storeCredentials(String email, String password) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('email', email);
-    await prefs.setString('password', password);
-    print('Credentials stored: $email, $password');
+    print('Attempting to store credentials...');
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      print('SharedPreferences instance obtained.');
+
+      await prefs.setString('email', email);
+      print('Email stored: $email');
+
+      await prefs.setString('password', password);
+      print('Password stored: $password');
+
+      print('Credentials successfully stored: $email, $password');
+    } catch (e) {
+      print('Error storing credentials: $e');
+    }
   }
 
   void _loginRequest(BuildContext context) async {
@@ -80,7 +90,6 @@ class _LoginPageState extends State<LoginPage> {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
       print('Attempting login with email: ${_emailController.text}');
-
       await authProvider.login(_emailController.text, _passwordController.text);
 
       // Check the result of the login
@@ -94,6 +103,14 @@ class _LoginPageState extends State<LoginPage> {
           text: "Wrong email or password",
         );
       } else {
+        try {
+          await _storeCredentials(
+              _emailController.text, _passwordController.text);
+          print('Credentials stored successfully');
+        } catch (e) {
+          print('Error storing credentials: $e');
+        }
+        print('Credentials stored');
         print('Login successful');
 
         Navigator.push(
@@ -105,6 +122,13 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       print('Form is invalid');
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -205,6 +229,12 @@ class _LoginPageState extends State<LoginPage> {
                       height: 60,
                       child: ElevatedButton(
                         onPressed: () {
+                          if (_emailController.text.isEmpty) {
+                            _validateEmail(_emailController.text);
+                          }
+                          if (_passwordController.text.isEmpty) {
+                            _validatePassword(_passwordController.text);
+                          }
                           _loginRequest(context);
                         },
                         style: ElevatedButton.styleFrom(

@@ -45,28 +45,44 @@ class AuthProvider with ChangeNotifier {
   // User login
   Future<void> login(String email, String password) async {
     setLoading(true);
+    print('Starting login process...');
+    print('Email: $email');
 
     try {
       final loginResponse = await _authService.login(email, password);
+      print('Login response received: $loginResponse');
 
       if (loginResponse['success'] == true) {
         _loginSuccess = true;
         _token = loginResponse['token'];
         _socketChannel = loginResponse['socket-channel'];
+        print(
+            'Login successful. Token: $_token, Socket Channel: $_socketChannel');
 
-        final profileDetails =
-            await _authService.getProfile(loginResponse['id']);
+        try {
+          final profileDetails =
+              await _authService.getProfile(loginResponse['id']);
+          print('Profile details received: $profileDetails');
 
-        _user = User.fromJson(profileDetails);
+          _user = User.fromJson(profileDetails);
+          print('User profile set: $_user');
+        } catch (profileError) {
+          print('Error fetching profile details: $profileError');
+          _loginSuccess = false;
+          _errorMessage = 'Failed to fetch profile details';
+        }
       } else {
         _loginSuccess = false;
         _errorMessage = loginResponse['error'];
+        print('Login failed with error: $_errorMessage');
       }
 
       setLoading(false);
+      print('Login process completed.');
     } catch (e) {
       _loginSuccess = false;
       _errorMessage = e.toString();
+      print('Exception during login: $_errorMessage');
       setLoading(false);
     }
   }
