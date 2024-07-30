@@ -112,12 +112,12 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
   }
 
   Future<void> updateUserInfo(
-      String userId, String field, String newValue) async {
+      String user_id, String field, String newValue) async {
     final response = await http.post(
       Uri.parse('http://16.171.150.101/PowerTrack/backend/profile/update'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'userId': userId,
+        'user_id': user_id,
         field: newValue,
       }),
     );
