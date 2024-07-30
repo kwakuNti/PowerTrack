@@ -31,8 +31,8 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'user_id': user_id,
-      'firstname': first_name,
-      'lastname': last_name,
+      'first_name': first_name,
+      'last_name': last_name,
       'email': email,
       'profile_Image': profile_image
     };
