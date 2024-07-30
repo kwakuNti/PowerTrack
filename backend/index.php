@@ -31,6 +31,7 @@ $pdo = $database->getPdo();
 $userController = new UserController($pdo);
 $forgetPasswordController = new ForgetPasswordController($pdo);
 $changePasswordController = new ChangePasswordController($pdo);
+$meterController = new MeterController($pdo);
 
 // Routes
 // Below I will define all the different end points that the user can send requests to
