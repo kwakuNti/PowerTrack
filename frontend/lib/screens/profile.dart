@@ -42,9 +42,14 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
         Uri.parse('http://16.171.150.101/PowerTrack/backend/users/$user_id'),
       );
 
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
         print('User data fetched successfully');
         final data = jsonDecode(response.body);
+        print('Fetched data: $data'); // Add this line to see the entire data
+
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         setState(() {
           authProvider.user?.first_name = data['first_name'];
@@ -54,8 +59,6 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
         });
       } else {
         print('Failed to fetch user data');
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
       }
     } catch (e) {
       print('Error fetching user data: $e');
@@ -149,6 +152,7 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
     final user = authProvider.user;
     final userProfileImage =
         'http://16.171.150.101/PowerTrack/backend/public/profile_images/${user?.profile_image ?? 'default_user.png'}';
+    print('User profile image URL: $userProfileImage');
 
     return Scaffold(
       appBar: AppBar(

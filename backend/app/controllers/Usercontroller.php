@@ -122,51 +122,37 @@ class UserController
     }
 
     // upload user profile
-    public function uploadProfileImage($id) {
+    public function uploadProfileImage($id){
+
         try {
-            if (!isset($_FILES['profile_image'])) {
-                print("No image attached\n");
+            
+            if(!isset($_FILES['profile_image'])){
                 throw new InvalidArgumentException("No image attached");
             }
-    
+
             $file = $_FILES['profile_image'];
-            print("File details:\n");
-            print_r($file);
-    
             $dir = __DIR__ . '/../../public/profile_images/';
-            print("Directory: $dir\n");
-    
-            // Create sanitized file name
-            $fileName = pathinfo($file['name'], PATHINFO_FILENAME);
-            $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $sanitizedFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $fileName);
-            $targetFile = $dir . $sanitizedFileName . '-' . $id . '.' . $fileExtension;
-    
-            print("Target file: $targetFile\n");
-    
-            // Move file
-            if (!move_uploaded_file($file['tmp_name'], $targetFile)) {
-                $error = error_get_last();
-                print("Failed to move uploaded file: " . $error['message'] . "\n");
+            $targetFile = $dir . basename($file['name']) . '-' . $id;
+
+            // move file from temp position to directory intenteded
+            if(!move_uploaded_file($file['tmp_name'], $targetFile)){
                 header('HTTP/1.1 500 Server Error');
-                throw new Exception("Error moving image: " . $error['message']);
+                throw new Exception("Error moving image");
             }
-    
-            print("File moved successfully\n");
-    
-            // Update user profile image path in database
+
+            // update user profile image path in database
             $this->userModel->updateProfileImage($id, basename($targetFile));
-    
+
             return ["success" => true, "message" => "Successful profile upload"];
-    
+
         } catch (InvalidArgumentException $e) {
-            print("Invalid Argument Exception: " . $e->getMessage() . "\n");
+            
             header('HTTP/1.1 422 Unprocessable Entity');
+            return ["success" => false, "message" => "File was not found in payload"];
+
+        } catch (Exception $e){
             return ["success" => false, "message" => $e->getMessage()];
-    
-        } catch (Exception $e) {
-            print("Exception: " . $e->getMessage() . "\n");
-            return ["success" => false, "message" => $e->getMessage()];
+
         }
     }
     

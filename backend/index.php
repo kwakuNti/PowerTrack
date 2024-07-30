@@ -130,6 +130,25 @@ $router->map('POST', '/users/change_password', function () use ($changePasswordC
     echo json_encode($changePasswordController->changePassword($data));
 });
 
+// Create meter
+$router->map('POST', '/meters', function () use ($meterController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    ValidationMiddleWare::handle($data, [
+        'user_id' => 'integer',
+        'meter_number' => 'string',
+        'location' => 'string'
+        // No latitude and longitude validation
+    ]);
+    echo json_encode($meterController->createMeter($data));
+});
+
+// Get meters by user_id
+$router->map('GET', '/meters/[i:user_id]', function ($user_id) use ($meterController) {
+    ValidationMiddleWare::handle(['user_id' => $user_id], ['user_id' => 'integer']);
+    echo json_encode($meterController->getMetersByUserId($user_id));
+});
+
+
 
 
 

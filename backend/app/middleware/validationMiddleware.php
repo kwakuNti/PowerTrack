@@ -47,6 +47,12 @@ class ValidationMiddleWare
                             $errors[$field] = "$field should be an integer";
                         }
                         break;
+                        case 'meter_number':
+                            // Validate that the meter_number is exactly 11 digits long
+                            if (!preg_match('/^\d{11}$/', $value)) {
+                                $errors[$field] = "$field must be exactly 11 digits";
+                            }
+                            break;
                 }
             }
         }

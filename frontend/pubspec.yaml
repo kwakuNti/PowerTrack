@@ -55,6 +55,7 @@ dependencies:
   test: ^1.21.0
   html: ^0.15.4
   image_picker:
+  permission_handler: ^11.3.1
 
 
 

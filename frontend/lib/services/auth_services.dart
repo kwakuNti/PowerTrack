@@ -80,4 +80,57 @@ class AuthService {
       throw Exception('Failed to get profile: $e');
     }
   }
+
+  // Create meter
+  Future<Map<String, dynamic>> createMeter(
+      int userId, String meterNumber, String location) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/meters'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_id': userId,
+          'meter_number': meterNumber,
+          'location': location,
+        }),
+      );
+      print('CreateMeter response status: ${response.statusCode}');
+      print('CreateMeter response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 500 || response.statusCode == 503) {
+        throw Exception("Server error");
+      } else {
+        return jsonDecode(
+            response.body); // Handle other responses (e.g., validation errors)
+      }
+    } catch (e) {
+      print('Error during createMeter: $e');
+      throw Exception('Failed to create meter: $e');
+    }
+  }
+
+  // Get meters by user ID
+  Future<List<dynamic>> getMetersByUserId(int userId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/meters/$userId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      print('GetMetersByUserId response status: ${response.statusCode}');
+      print('GetMetersByUserId response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 500 || response.statusCode == 503) {
+        throw Exception("Server error");
+      } else {
+        throw Exception("Failed to get meters");
+      }
+    } catch (e) {
+      print('Error during getMetersByUserId: $e');
+      throw Exception('Failed to get meters: $e');
+    }
+  }
 }

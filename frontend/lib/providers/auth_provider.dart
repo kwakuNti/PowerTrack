@@ -118,4 +118,34 @@ class AuthProvider with ChangeNotifier {
     _user = updatedUser;
     notifyListeners();
   }
+
+  // Create meter
+  Future<void> createMeter(
+      int userId, String meterNumber, String location) async {
+    setLoading(true);
+    try {
+      final createMeterResponse =
+          await _authService.createMeter(userId, meterNumber, location);
+      if (createMeterResponse['status'] == 'success') {
+        print('Meter created successfully');
+      } else {
+        print('Failed to create meter: ${createMeterResponse['message']}');
+      }
+    } catch (e) {
+      print('Exception during createMeter: $e');
+    }
+    setLoading(false);
+  }
+
+  // Get meters by user ID
+  Future<void> getMetersByUserId(int userId) async {
+    setLoading(true);
+    try {
+      final getMetersResponse = await _authService.getMetersByUserId(userId);
+      print('Meters received: $getMetersResponse');
+    } catch (e) {
+      print('Exception during getMetersByUserId: $e');
+    }
+    setLoading(false);
+  }
 }

@@ -175,12 +175,13 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void _navigateToWelcome() {
+  void _navigateToWelcome() async {
+    await Future.delayed(const Duration(seconds: 5));
     print('Navigating to WelcomeScreen');
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const SignUpPage()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
 

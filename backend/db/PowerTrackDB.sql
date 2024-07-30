@@ -91,3 +91,6 @@ CREATE TABLE tokens (
 
 
 
+ALTER TABLE meters
+DROP COLUMN latitude,
+DROP COLUMN longitude;
