@@ -105,16 +105,32 @@ class AuthService {
           'customer_number': customerNumber,
         }),
       );
+
       print('CreateMeter response status: ${response.statusCode}');
       print('CreateMeter response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final responseBody = jsonDecode(response.body);
+
+        // Debug print to check the structure of the response
+        print('CreateMeter response: $responseBody');
+
+        // Check if the response contains the expected keys and values
+        if (responseBody.containsKey('status') &&
+            responseBody.containsKey('message')) {
+          // Handle success
+          if (responseBody['status'] == 'success') {
+            return responseBody;
+          } else {
+            throw Exception('API response error: ${responseBody['message']}');
+          }
+        } else {
+          throw Exception('Unexpected response format: $responseBody');
+        }
       } else if (response.statusCode == 500 || response.statusCode == 503) {
         throw Exception("Server error");
       } else {
-        return jsonDecode(
-            response.body); // Handle other responses (e.g., validation errors)
+        throw Exception('Unexpected status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error during createMeter: $e');

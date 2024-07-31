@@ -101,6 +101,14 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
         return;
       }
 
+      // Print entered details for debugging
+      print('Meter Name: ${_meterNameController.text}');
+      print('Meter Number: $meterNumber');
+      print('Customer Name: ${_customerNameController.text}');
+      print('Customer Number: ${_customerNumberController.text}');
+      print('Address: ${_addressController.text}');
+      print('User ID: $userId');
+
       try {
         final response = await _authService.createMeter(
           userId: userId,
@@ -114,8 +122,9 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
         print('CreateMeter response: $response');
 
         if (response['status'] == 'success') {
+          // Create Meter object without meterId if not returned
           final newMeter = Meter(
-            meterId: response['meter_id'],
+            meterId: 0, // Default to 0 if meter_id is not returned
             userId: userId,
             meterNumber: meterNumber,
             location: _addressController.text,
