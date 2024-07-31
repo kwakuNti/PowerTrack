@@ -227,4 +227,32 @@ class AuthService {
       return [];
     }
   }
+
+  Future<Map<String, dynamic>> deleteMeter(int meterId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/meters/$meterId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('DeleteMeter response status: ${response.statusCode}');
+      print('DeleteMeter response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['status'] == 'success') {
+          return responseBody;
+        } else {
+          throw Exception('API response error: ${responseBody['message']}');
+        }
+      } else if (response.statusCode == 500 || response.statusCode == 503) {
+        throw Exception("Server error");
+      } else {
+        throw Exception('Unexpected status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error during deleteMeter: $e');
+      throw Exception('Failed to delete meter: $e');
+    }
+  }
 }

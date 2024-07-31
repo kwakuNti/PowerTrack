@@ -58,4 +58,23 @@ class MeterController {
             return ['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()];
         }
     }
+
+    public function deleteMeter($meterId) {
+        try {
+            $stmt = $this->pdo->prepare("DELETE FROM meters WHERE meter_id = :meter_id");
+            $stmt->bindParam(':meter_id', $meterId, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                if ($stmt->rowCount() > 0) {
+                    return ['status' => 'success', 'message' => 'Meter deleted successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'No meter found with the given ID'];
+                }
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to delete meter'];
+            }
+        } catch (PDOException $e) {
+            return ['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()];
+        }
+    }
 }

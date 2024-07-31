@@ -198,6 +198,21 @@ $router->map('GET', '/transactions/[i:user_id]', function ($user_id) use ($trans
     echo json_encode($response);
 });
 
+// Delete meter by meter_id
+$router->map('DELETE', '/meters/[i:meter_id]', function ($meter_id) use ($meterController) {
+    ValidationMiddleWare::handle(['meter_id' => $meter_id], ['meter_id' => 'integer']);
+    $response = $meterController->deleteMeter($meter_id);
+    
+    if ($response['status'] === 'error' && isset($response['message'])) {
+        http_response_code(404); // Not Found
+    } else {
+        http_response_code(200); // OK
+    }
+
+    echo json_encode($response);
+});
+
+
 
 
 
