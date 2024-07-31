@@ -37,16 +37,17 @@ CREATE TABLE meters (
 -- Create Transactions table
 CREATE TABLE transactions (
     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
-    meter_id INT NOT NULL,
     user_id INT NOT NULL,
+    meter_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    payment_method ENUM('credit_card', 'debit_card', 'mobile_money') NOT NULL,
-    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-    description VARCHAR(255),
-    FOREIGN KEY (meter_id) REFERENCES meters(meter_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    payment_method VARCHAR(50) NOT NULL,
+    transaction_status VARCHAR(20) NOT NULL, -- e.g., 'pending', 'completed', 'failed'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (meter_id) REFERENCES meters(meter_id)
 );
+
 
 -- Create MeterUsage table
 CREATE TABLE meter_usage (

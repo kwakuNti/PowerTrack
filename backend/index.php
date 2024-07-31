@@ -14,6 +14,8 @@ require_once __DIR__ . '/app/controllers/ForgetPasswordController.php';
 require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 require_once __DIR__ . '/app/controllers/meterController.php';
 require_once __DIR__ . '/app/controllers/changePasswordController.php';
+require_once __DIR__ . '/app/controllers/transactionController.php';
+
 
 
 use Dotenv\Dotenv;
@@ -32,6 +34,8 @@ $userController = new UserController($pdo);
 $forgetPasswordController = new ForgetPasswordController($pdo);
 $changePasswordController = new ChangePasswordController($pdo);
 $meterController = new MeterController($pdo);
+$transactionController = new TransactionController($pdo);
+
 
 // Routes
 // Below I will define all the different end points that the user can send requests to
@@ -154,6 +158,36 @@ $router->map('POST', '/meters', function () use ($meterController) {
 $router->map('GET', '/meters/[i:user_id]', function ($user_id) use ($meterController) {
     ValidationMiddleWare::handle(['user_id' => $user_id], ['user_id' => 'integer']);
     $response = $meterController->getMetersByUserId($user_id);
+    
+    if ($response['status'] === 'error' && isset($response['message'])) {
+        http_response_code(404); // Not Found
+    } else {
+        http_response_code(200); // OK
+    }
+
+    echo json_encode($response);
+});
+
+// Create transaction
+$router->map('POST', '/transactions', function () use ($transactionController) {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Validate data
+    ValidationMiddleWare::handle($data, [
+        'user_id' => 'integer',
+        'meter_id' => 'integer',
+        'amount' => 'decimal',
+        'payment_method' => 'string',
+        'transaction_status' => 'string'
+    ]);
+
+    echo json_encode($transactionController->createTransaction($data));
+});
+
+// Get transactions by user ID
+$router->map('GET', '/transactions/[i:user_id]', function ($user_id) use ($transactionController) {
+    ValidationMiddleWare::handle(['user_id' => $user_id], ['user_id' => 'integer']);
+    $response = $transactionController->getTransactionsByUserId($user_id);
     
     if ($response['status'] === 'error' && isset($response['message'])) {
         http_response_code(404); // Not Found
