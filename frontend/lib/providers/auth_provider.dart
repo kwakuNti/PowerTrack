@@ -120,12 +120,24 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Create meter
-  Future<void> createMeter(
-      int userId, String meterNumber, String location) async {
+  Future<void> createMeter({
+    required int userId,
+    required String meterNumber,
+    required String location,
+    required String meterName,
+    required String customerName,
+    required String customerNumber,
+  }) async {
     setLoading(true);
     try {
-      final createMeterResponse =
-          await _authService.createMeter(userId, meterNumber, location);
+      final createMeterResponse = await _authService.createMeter(
+        userId: userId,
+        meterNumber: meterNumber,
+        location: location,
+        meterName: meterName,
+        customerName: customerName,
+        customerNumber: customerNumber,
+      );
       if (createMeterResponse['status'] == 'success') {
         print('Meter created successfully');
       } else {

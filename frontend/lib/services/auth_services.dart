@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:frontend/models/Meter.dart';
 
 class AuthService {
   // Replace with your actual backend URL
@@ -82,8 +83,15 @@ class AuthService {
   }
 
   // Create meter
-  Future<Map<String, dynamic>> createMeter(
-      int userId, String meterNumber, String location) async {
+// Create meter
+  Future<Map<String, dynamic>> createMeter({
+    required int userId,
+    required String meterNumber,
+    required String location,
+    required String meterName,
+    required String customerName,
+    required String customerNumber,
+  }) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/meters'),
@@ -92,6 +100,9 @@ class AuthService {
           'user_id': userId,
           'meter_number': meterNumber,
           'location': location,
+          'meter_name': meterName,
+          'customer_name': customerName,
+          'customer_number': customerNumber,
         }),
       );
       print('CreateMeter response status: ${response.statusCode}');
@@ -112,7 +123,7 @@ class AuthService {
   }
 
   // Get meters by user ID
-  Future<List<dynamic>> getMetersByUserId(int userId) async {
+  Future<List<Meter>> getMetersByUserId(int userId) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/meters/$userId'),
@@ -122,7 +133,8 @@ class AuthService {
       print('GetMetersByUserId response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        return jsonData.map((json) => Meter.fromJson(json)).toList();
       } else if (response.statusCode == 500 || response.statusCode == 503) {
         throw Exception("Server error");
       } else {

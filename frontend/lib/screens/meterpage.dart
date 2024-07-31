@@ -1,8 +1,9 @@
+// lib/screens/meterpage.dart
+
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'enter_meter.dart';
-import '/models/meter_details.dart';
+import '/models/Meter.dart';
 import 'payment.dart';
 import 'usagepage.dart'; // Import the UsagePage
 
@@ -14,13 +15,13 @@ class MetersPage extends StatefulWidget {
 }
 
 class _MetersPageState extends State<MetersPage> {
-  final List<MeterDetails> _meters = [];
+  final List<Meter> _meters = [];
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  void _addMeter(MeterDetails meterDetails) {
+  void _addMeter(Meter meter) {
     setState(() {
-      _meters.add(meterDetails);
+      _meters.add(meter);
     });
   }
 
@@ -95,7 +96,7 @@ class _MetersPageState extends State<MetersPage> {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    'Address: ${meter.address}',
+                                    'Location: ${meter.location}',
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                 ],
@@ -183,13 +184,13 @@ class _MetersPageState extends State<MetersPage> {
     );
   }
 
-  Widget _buildMeterCard(MeterDetails meterDetails) {
+  Widget _buildMeterCard(Meter meter) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UsagePage(meterDetails: meterDetails),
+            builder: (context) => UsagePage(),
           ),
         );
       },
@@ -219,7 +220,7 @@ class _MetersPageState extends State<MetersPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    meterDetails.meterName,
+                    meter.meterName,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -228,7 +229,7 @@ class _MetersPageState extends State<MetersPage> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'Meter Number: ${meterDetails.meterNumber}',
+                    'Meter Number: ${meter.meterNumber}',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
@@ -263,7 +264,7 @@ class _MetersPageState extends State<MetersPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              PaymentPage(meterId: meterDetails.meterNumber)),
+                              PaymentPage(meterId: meter.meterNumber)),
                     );
                   },
                   style: ElevatedButton.styleFrom(

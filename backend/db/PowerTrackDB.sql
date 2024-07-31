@@ -19,17 +19,20 @@ CREATE TABLE users (
 );
 
 -- Create Meters table
+-- Create Meters table with additional columns
 CREATE TABLE meters (
     meter_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     meter_number VARCHAR(50) UNIQUE NOT NULL,
     location VARCHAR(255) NOT NULL,
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
+    meter_name VARCHAR(255),
+    customer_name VARCHAR(255),
+    customer_number VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
 
 -- Create Transactions table
 CREATE TABLE transactions (
@@ -89,8 +92,3 @@ CREATE TABLE tokens (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-
-
-ALTER TABLE meters
-DROP COLUMN latitude,
-DROP COLUMN longitude;
