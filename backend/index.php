@@ -15,6 +15,7 @@ require_once __DIR__ . '/app/middleware/validationMiddleware.php';
 require_once __DIR__ . '/app/controllers/meterController.php';
 require_once __DIR__ . '/app/controllers/changePasswordController.php';
 require_once __DIR__ . '/app/controllers/transactionController.php';
+require_once __DIR__ . '/app/controllers/MeterUsageController.php';
 
 
 
