@@ -1,6 +1,9 @@
 // lib/screens/meterpage.dart
 
 import 'package:flutter/material.dart';
+import 'package:frontend/providers/auth_provider.dart';
+import 'package:frontend/services/auth_services.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'enter_meter.dart';
 import '/models/Meter.dart';
@@ -18,6 +21,50 @@ class _MetersPageState extends State<MetersPage> {
   final List<Meter> _meters = [];
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  final AuthService _authService = AuthService(); // Initialize AuthService
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMeters();
+  }
+
+  Future<void> _fetchMeters() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final userId =
+          Provider.of<AuthProvider>(context, listen: false).user?.user_id;
+      if (userId == null) {
+        setState(() {
+          _errorMessage = 'User ID is null';
+        });
+        print('User ID is null');
+        return;
+      }
+
+      final meters = await _authService.getMetersByUserId(userId);
+      setState(() {
+        _meters.clear();
+        _meters.addAll(meters);
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred: $e';
+      });
+      print('Error during meter fetch: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+        _refreshController.refreshCompleted();
+      });
+    }
+  }
 
   void _addMeter(Meter meter) {
     setState(() {
@@ -26,8 +73,7 @@ class _MetersPageState extends State<MetersPage> {
   }
 
   void _onRefresh() async {
-    // Simulate a network call
-    await Future.delayed(const Duration(seconds: 2));
+    await _fetchMeters();
     _refreshController.refreshCompleted();
   }
 
@@ -139,7 +185,7 @@ class _MetersPageState extends State<MetersPage> {
           MaterialPageRoute(
             builder: (context) => EnterMeterNumberPage(onAddMeter: _addMeter),
           ),
-        );
+        ).then((_) => _fetchMeters()); // Refresh meters after adding
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8, // Make card wider
@@ -190,7 +236,7 @@ class _MetersPageState extends State<MetersPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UsagePage(),
+            builder: (context) => UsagePage(meter: meter),
           ),
         );
       },
@@ -251,6 +297,13 @@ class _MetersPageState extends State<MetersPage> {
                         fontSize: 12,
                       ),
                     ),
+                    Text(
+                      '100KW',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 18,
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -264,7 +317,7 @@ class _MetersPageState extends State<MetersPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              PaymentPage(meterId: meter.meterNumber)),
+                              PaymentPage(meterId: meter.meterName)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
