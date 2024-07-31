@@ -234,7 +234,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.credit_card),
                     title: Text(
-                      'Manage Cards',
+                      'Manage Meters',
                       style: GoogleFonts.poppins(),
                     ),
                     trailing: const Icon(Icons.arrow_forward_ios),

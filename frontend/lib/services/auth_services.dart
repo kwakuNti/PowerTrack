@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/models/Meter.dart';
+import 'package:frontend/models/MeterUsage.dart';
 
 class AuthService {
   // Replace with your actual backend URL
@@ -253,6 +254,31 @@ class AuthService {
     } catch (e) {
       print('Error during deleteMeter: $e');
       throw Exception('Failed to delete meter: $e');
+    }
+  }
+
+  // Fetch meter usage records by meter ID
+  Future<List<MeterUsage>> getMeterUsageByMeterId(int meterId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/meter_usage/$meterId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('GetMeterUsageByMeterId response status: ${response.statusCode}');
+      print('GetMeterUsageByMeterId response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        return jsonData.map((json) => MeterUsage.fromJson(json)).toList();
+      } else if (response.statusCode == 500 || response.statusCode == 503) {
+        throw Exception("Server error");
+      } else {
+        throw Exception("Failed to get meter usage");
+      }
+    } catch (e) {
+      print('Error during getMeterUsageByMeterId: $e');
+      throw Exception('Failed to get meter usage: $e');
     }
   }
 }

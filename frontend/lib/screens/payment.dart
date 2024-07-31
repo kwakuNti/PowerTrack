@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/providers/auth_provider.dart';
+import 'package:frontend/screens/home.dart';
 import 'package:frontend/screens/transaction.dart';
 import 'package:frontend/services/auth_services.dart';
 import 'package:provider/provider.dart';
@@ -129,7 +130,7 @@ class _PaymentPageState extends State<PaymentPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const TransactionsScreen(),
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       } else {

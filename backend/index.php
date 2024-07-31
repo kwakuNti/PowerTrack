@@ -35,6 +35,8 @@ $forgetPasswordController = new ForgetPasswordController($pdo);
 $changePasswordController = new ChangePasswordController($pdo);
 $meterController = new MeterController($pdo);
 $transactionController = new TransactionController($pdo);
+$meterUsageController = new MeterUsageController($pdo);
+
 
 
 // Routes
@@ -212,6 +214,12 @@ $router->map('DELETE', '/meters/[i:meter_id]', function ($meter_id) use ($meterC
     echo json_encode($response);
 });
 
+
+
+// Retrieve meter usage data by meter ID
+$router->map('GET', '/meter_usage/[i:meter_id]', function ($meter_id) use ($meterUsageController) {
+    $meterUsageController->getUsageByMeterId($meter_id);
+});
 
 
 

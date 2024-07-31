@@ -19,6 +19,9 @@ class MetersPage extends StatefulWidget {
 
 class _MetersPageState extends State<MetersPage> {
   final List<Meter> _meters = [];
+  final Map<int, String> _meterUsageMap =
+      {}; // Map to store meter usage information
+
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   final AuthService _authService = AuthService(); // Initialize AuthService
@@ -48,7 +51,28 @@ class _MetersPageState extends State<MetersPage> {
         return;
       }
 
+      // Fetch meters
       final meters = await _authService.getMetersByUserId(userId);
+
+      // Clear previous data
+      _meterUsageMap.clear();
+
+      // Fetch usage for each meter and populate the map
+      for (var meter in meters) {
+        try {
+          final meterUsageList =
+              await _authService.getMeterUsageByMeterId(meter.meterId);
+          final meterUsage = meterUsageList.isNotEmpty
+              ? meterUsageList.first
+              : '0'; // Assuming list contains a single usage value
+          _meterUsageMap[meter.meterId] =
+              '$meterUsage KW'; // Store usage information with "KW" suffix
+        } catch (e) {
+          print('Error fetching usage for meter ${meter.meterId}: $e');
+          _meterUsageMap[meter.meterId] = 'Error fetching usage';
+        }
+      }
+
       setState(() {
         _meters.clear();
         _meters.addAll(meters);
@@ -283,14 +307,15 @@ class _MetersPageState extends State<MetersPage> {
                   ),
                 ],
               ),
-              const Align(
+              Align(
                 alignment: Alignment.bottomRight,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.electric_meter, color: Colors.white70, size: 18),
+                    const Icon(Icons.electric_meter,
+                        color: Colors.white70, size: 18),
                     SizedBox(width: 5),
-                    Text(
+                    const Text(
                       'Meter Details',
                       style: TextStyle(
                         color: Colors.white70,
@@ -298,10 +323,10 @@ class _MetersPageState extends State<MetersPage> {
                       ),
                     ),
                     Text(
-                      '100KW',
-                      style: TextStyle(
+                      'Usage: ${_meterUsageMap[meter.meterId] ?? '0 KW'}', // Display usage information
+                      style: const TextStyle(
                         color: Colors.white70,
-                        fontSize: 18,
+                        fontSize: 14,
                       ),
                     )
                   ],
