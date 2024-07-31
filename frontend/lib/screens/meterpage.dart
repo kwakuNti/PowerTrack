@@ -317,7 +317,7 @@ class _MetersPageState extends State<MetersPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              PaymentPage(meterId: meter.meterName)),
+                              PaymentPage(meterId: meter.meterId)),
                     );
                   },
                   style: ElevatedButton.styleFrom(

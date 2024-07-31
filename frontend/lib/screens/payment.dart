@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
+import 'package:frontend/providers/auth_provider.dart';
+import 'package:frontend/screens/transaction.dart';
+import 'package:frontend/services/auth_services.dart';
+import 'package:provider/provider.dart';
 
 class PaymentPage extends StatefulWidget {
-  final String meterId;
+  final int meterId; // Updated to int
 
   PaymentPage({required this.meterId});
 
@@ -11,188 +15,166 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  String _paymentMethod = 'momo';
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _paymentMethodController =
+      TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final userId = authProvider.user?.user_id;
+
+    if (userId == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Payment'),
+          backgroundColor: Colors.blueAccent,
+        ),
+        body: const Center(child: Text('User ID is not available')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payment for Meter ${widget.meterId}'),
-        backgroundColor: Colors.blue.shade50,
+        title: const Text('Payment'),
+        backgroundColor: Colors.blueAccent,
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  'assets/pattern.png'), // Add your minimal pattern image in the assets folder
-              fit: BoxFit.cover,
-            ),
-          ),
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Select Payment Method',
-                style: GoogleFonts.poppins(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text(
+                  'Enter Payment Details',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 10.0),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5.0,
-                      spreadRadius: 2.0,
+                const SizedBox(height: 16),
+                if (_errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red),
                     ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(
-                        'Mobile Money',
-                        style: GoogleFonts.poppins(),
-                      ),
-                      leading: Radio<String>(
-                        value: 'momo',
-                        groupValue: _paymentMethod,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _paymentMethod = value!;
-                          });
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Card (Visa)',
-                        style: GoogleFonts.poppins(),
-                      ),
-                      leading: Radio<String>(
-                        value: 'card',
-                        groupValue: _paymentMethod,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _paymentMethod = value!;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              if (_paymentMethod == 'momo') MobileMoneyForm(),
-              if (_paymentMethod == 'card') CardPaymentForm(),
-              const SizedBox(height: 30.0),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle payment submission logic here
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 50.0, vertical: 15.0),
-                    textStyle: GoogleFonts.poppins(fontSize: 16.0),
                   ),
-                  child: const Text('Submit Payment'),
+                TextFormField(
+                  controller: _amountController,
+                  decoration: const InputDecoration(
+                    labelText: 'Amount',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.attach_money),
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an amount';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Please enter a valid amount';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _paymentMethodController,
+                  decoration: const InputDecoration(
+                    labelText: 'Payment Method',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.payment),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter payment method';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      final amount = double.parse(_amountController.text);
+                      final paymentMethod = _paymentMethodController.text;
+
+                      setState(() {
+                        _isLoading = true;
+                      });
+
+                      final response = await _createTransaction(
+                        userId: userId,
+                        meterId: widget.meterId, // Using integer meterId
+                        amount: amount,
+                        paymentMethod: paymentMethod,
+                        transactionStatus: 'complete',
+                      );
+
+                      setState(() {
+                        _isLoading = false;
+                      });
+
+                      if (response['status'] == 'success') {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Payment successful')),
+                        );
+                        // Navigate to TransactionsScreen
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TransactionsScreen(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('Payment failed: ${response['message']}'),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Submit Payment'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-      backgroundColor: Colors.blue.shade50,
     );
   }
-}
 
-class MobileMoneyForm extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5.0,
-            spreadRadius: 2.0,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          TextField(
-            style: GoogleFonts.poppins(),
-            decoration: InputDecoration(
-              labelText: 'MoMo Number',
-              labelStyle: GoogleFonts.poppins(),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-        ],
-      ),
-    );
-  }
-}
+  Future<Map<String, dynamic>> _createTransaction({
+    required int userId,
+    required int meterId, // Updated to int
+    required double amount,
+    required String paymentMethod,
+    required String transactionStatus,
+  }) async {
+    try {
+      final authService = AuthService();
+      final response = await authService.createTransaction(
+        userId: userId,
+        meterId: meterId,
+        amount: amount,
+        paymentMethod: paymentMethod,
+        transactionStatus: transactionStatus,
+      );
 
-class CardPaymentForm extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5.0,
-            spreadRadius: 2.0,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          TextField(
-            style: GoogleFonts.poppins(),
-            decoration: InputDecoration(
-              labelText: 'Card Number',
-              labelStyle: GoogleFonts.poppins(),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          TextField(
-            style: GoogleFonts.poppins(),
-            decoration: InputDecoration(
-              labelText: 'Expiry Date',
-              labelStyle: GoogleFonts.poppins(),
-            ),
-            keyboardType: TextInputType.datetime,
-          ),
-          TextField(
-            style: GoogleFonts.poppins(),
-            decoration: InputDecoration(
-              labelText: 'CVV',
-              labelStyle: GoogleFonts.poppins(),
-            ),
-            keyboardType: TextInputType.number,
-            obscureText: true,
-          ),
-        ],
-      ),
-    );
+      return response;
+    } catch (e) {
+      print('Error during createTransaction: $e');
+      return {'status': 'error', 'message': 'Failed to create transaction'};
+    }
   }
 }

@@ -21,7 +21,7 @@ class TransactionController
 
         if ($response['status'] === 'success') {
             // Calculate kWh and add usage record
-            $kWh = $data['amount'] * 0.1; // Example conversion factor
+            $kWh = $data['amount'] * 0.110; // Example conversion factor
             $this->meterUsage->addUsage([
                 'meter_id' => $data['meter_id'],
                 'user_id' => $data['user_id'],

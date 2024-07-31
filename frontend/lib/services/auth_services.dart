@@ -161,4 +161,70 @@ class AuthService {
       throw Exception('Failed to get meters: $e');
     }
   }
+
+  // Create transaction
+  Future<Map<String, dynamic>> createTransaction({
+    required int userId,
+    required int meterId,
+    required double amount,
+    required String paymentMethod,
+    required String transactionStatus,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/transactions'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_id': userId,
+          'meter_id': meterId,
+          'amount': amount,
+          'payment_method': paymentMethod,
+          'transaction_status': transactionStatus,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 500 || response.statusCode == 503) {
+        throw Exception("Server error");
+      } else {
+        throw Exception('Unexpected status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error during createTransaction: $e');
+      throw Exception('Failed to create transaction: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchTransactions(int userId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/transactions/$userId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == 'success') {
+          List<dynamic> transactions = data['data'];
+          return transactions
+              .map((item) => item as Map<String, dynamic>)
+              .toList();
+        } else {
+          print('Error in response data: ${data['message']}');
+          throw Exception('Failed to load transactions');
+        }
+      } else {
+        print(
+            'Failed to load transactions: Status code ${response.statusCode}');
+        throw Exception('Failed to load transactions');
+      }
+    } catch (e) {
+      print('Error fetching transactions: $e');
+      return [];
+    }
+  }
 }

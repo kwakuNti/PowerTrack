@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'home.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/providers/auth_provider.dart';
+import 'package:frontend/services/auth_services.dart';
 
 class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({super.key});
@@ -12,47 +15,72 @@ class TransactionsScreen extends StatefulWidget {
 class _TransactionsScreenState extends State<TransactionsScreen> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  late AuthService _authService;
+  List<Map<String, dynamic>> _transactions = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = AuthService();
+    _fetchTransactions();
+  }
+
+  Future<void> _fetchTransactions() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userId = authProvider.user?.user_id;
+
+    if (userId == null) {
+      print('User ID is not available');
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    print('Fetching transactions for user ID: $userId');
+
+    try {
+      final transactions = await _authService.fetchTransactions(userId);
+      print('Transactions fetched successfully: $transactions');
+      setState(() {
+        _transactions = transactions;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching transactions: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   void _onRefresh() async {
-    // Simulate a network call
-    await Future.delayed(const Duration(seconds: 2));
+    await _fetchTransactions();
     _refreshController.refreshCompleted();
   }
 
   @override
-  void dispose() {
-    _refreshController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      controller: _refreshController,
-      onRefresh: _onRefresh,
-      child: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: const [
-          TransactionTile(
-            date: '2024-07-15',
-            amount: '50.00',
-            description: 'Credit Purchase',
-          ),
-          Divider(),
-          TransactionTile(
-            date: '2024-07-10',
-            amount: '30.00',
-            description: 'Credit Purchase',
-          ),
-          Divider(),
-          TransactionTile(
-            date: '2024-07-05',
-            amount: '20.00',
-            description: 'Credit Purchase',
-          ),
-          // Add more transactions here
-        ],
-      ),
+    return Scaffold(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SmartRefresher(
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16.0),
+                itemCount: _transactions.length,
+                itemBuilder: (context, index) {
+                  final transaction = _transactions[index];
+                  return TransactionTile(
+                    date: transaction['created_at'],
+                    amount: transaction['amount'].toString(),
+                    description: 'Credit Purchase', // Modify if needed
+                  );
+                },
+              ),
+            ),
     );
   }
 }
