@@ -93,3 +93,4 @@ CREATE TABLE tokens (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+ALTER TABLE meters ADD COLUMN is_deleted TINYINT(1) DEFAULT 0;

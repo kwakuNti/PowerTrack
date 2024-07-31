@@ -44,7 +44,7 @@ class MeterController {
 
     public function getMetersByUserId($userId) {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM meters WHERE user_id = :user_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM meters WHERE user_id = :user_id AND is_deleted = 0");
             $stmt->bindParam(':user_id', $userId);
             $stmt->execute();
             $meters = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -59,22 +59,22 @@ class MeterController {
         }
     }
 
-    public function deleteMeter($meterId) {
-        try {
-            $stmt = $this->pdo->prepare("DELETE FROM meters WHERE meter_id = :meter_id");
-            $stmt->bindParam(':meter_id', $meterId, PDO::PARAM_INT);
+// MeterController.php
 
-            if ($stmt->execute()) {
-                if ($stmt->rowCount() > 0) {
-                    return ['status' => 'success', 'message' => 'Meter deleted successfully'];
-                } else {
-                    return ['status' => 'error', 'message' => 'No meter found with the given ID'];
-                }
-            } else {
-                return ['status' => 'error', 'message' => 'Failed to delete meter'];
-            }
-        } catch (PDOException $e) {
-            return ['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()];
+public function softDeleteMeter($meter_id) {
+    try {
+        $stmt = $this->pdo->prepare('UPDATE meters SET is_deleted = 1 WHERE meter_id = :meter_id');
+        $stmt->bindParam(':meter_id', $meter_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            return ['status' => 'success', 'message' => 'Meter marked as deleted'];
+        } else {
+            return ['status' => 'error', 'message' => 'Meter not found'];
         }
+    } catch (PDOException $e) {
+        return ['status' => 'error', 'message' => 'Error marking meter as deleted: ' . $e->getMessage()];
     }
+}
+
 }
