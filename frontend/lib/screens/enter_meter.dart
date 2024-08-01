@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/main.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import '../models/Meter.dart'; // Make sure to import the correct Meter class
 import '../services/auth_services.dart';
 import '../providers/auth_provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class EnterMeterNumberPage extends StatefulWidget {
   final Function(Meter) onAddMeter;
@@ -32,6 +34,30 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+  }
+
+  Future<void> showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'channel_id', // Change this to your own channel ID
+      'channel_name', // Change this to your own channel name
+      channelDescription:
+          'channel_description', // Change this to your own description
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      title,
+      body,
+      platformChannelSpecifics,
+      payload: 'item x', // Optional payload data
+    );
   }
 
   Future<void> _getCurrentLocation() async {
@@ -218,6 +244,7 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
           );
           widget.onAddMeter(newMeter);
           Navigator.pop(context);
+          showNotification('Power', 'A new meter has been successfully added.');
         } else {
           setState(() {
             _errorMessage = response['message'] ?? 'Failed to add meter';

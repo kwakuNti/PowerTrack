@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +10,8 @@ import 'settings.dart';
 import 'transaction.dart';
 import 'package:frontend/providers/auth_provider.dart';
 import 'package:frontend/services/auth_services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:frontend/main.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,15 +57,6 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const ManageAccountPage()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.notification_add_rounded),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
               );
             },
           ),
@@ -112,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _transactions = [];
   bool _loading = true;
   bool _loadingTransactions = true;
+  Timer? _timer; // Add this line
 
   @override
   void initState() {
@@ -119,6 +114,43 @@ class _HomeScreenState extends State<HomeScreen> {
     _authService = AuthService();
     _fetchNews();
     _fetchTransactions();
+    _startNewsFetchTimer(); // Start the timer
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
+  }
+
+  void _startNewsFetchTimer() {
+    _timer = Timer.periodic(Duration(seconds: 60), (timer) {
+      _fetchNews();
+    });
+  }
+
+  Future<void> showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'channel_id', // Change this to your own channel ID
+      'channel_name', // Change this to your own channel name
+      channelDescription:
+          'channel_description', // Change this to your own description
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      title,
+      body,
+      platformChannelSpecifics,
+      payload: 'item x', // Optional payload data
+    );
   }
 
   Future<void> _fetchNews() async {
@@ -138,6 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _newsArticles = data['results'];
           _loading = false;
           print('Number of articles fetched: ${_newsArticles.length}');
+          showNotification('PowerTrack', 'News update');
         });
       } else {
         throw Exception('Failed to load news');
@@ -300,11 +333,9 @@ class _HomeScreenState extends State<HomeScreen> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              // Navigate to Meters page
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MetersPage()),
-              );
+              // Navigate to Meters page using index
+              (context.findAncestorStateOfType<_HomePageState>()!)
+                  ._onItemTapped(1);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
@@ -320,12 +351,9 @@ class _HomeScreenState extends State<HomeScreen> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              // Navigate to Transactions page
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const TransactionsScreen()),
-              );
+              // Navigate to Transactions page using index
+              (context.findAncestorStateOfType<_HomePageState>()!)
+                  ._onItemTapped(2);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,

@@ -4,6 +4,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/auth_provider.dart';
 import 'package:frontend/services/auth_services.dart';
+import 'package:frontend/main.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({super.key});
@@ -24,6 +26,30 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     super.initState();
     _authService = AuthService();
     _fetchTransactions();
+  }
+
+  Future<void> showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'channel_id', // Change this to your own channel ID
+      'channel_name', // Change this to your own channel name
+      channelDescription:
+          'channel_description', // Change this to your own description
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      title,
+      body,
+      platformChannelSpecifics,
+      payload: 'item x', // Optional payload data
+    );
   }
 
   Future<void> _fetchTransactions() async {
