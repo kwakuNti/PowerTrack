@@ -269,8 +269,16 @@ class AuthService {
       print('GetMeterUsageByMeterId response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final List<dynamic> jsonData = jsonDecode(response.body);
-        return jsonData.map((json) => MeterUsage.fromJson(json)).toList();
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+        // Check if the status is success
+        if (jsonResponse['status'] == 'success') {
+          final List<dynamic> jsonData = jsonResponse['data'];
+          return jsonData.map((json) => MeterUsage.fromJson(json)).toList();
+        } else {
+          throw Exception(
+              'Failed to get meter usage: ${jsonResponse['status']}');
+        }
       } else if (response.statusCode == 500 || response.statusCode == 503) {
         throw Exception("Server error");
       } else {

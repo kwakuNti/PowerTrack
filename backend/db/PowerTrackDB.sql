@@ -74,16 +74,6 @@ CREATE TABLE maintenance_requests (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
--- Create Notifications table
-CREATE TABLE notifications (
-    notification_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    message VARCHAR(255) NOT NULL,
-    type ENUM('low_credit', 'top_up_success', 'maintenance_update') NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
 
 -- Create Tokens table
 CREATE TABLE tokens (

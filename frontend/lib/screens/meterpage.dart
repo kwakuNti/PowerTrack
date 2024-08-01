@@ -1,5 +1,3 @@
-// lib/screens/meterpage.dart
-
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/auth_provider.dart';
 import 'package:frontend/services/auth_services.dart';
@@ -7,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'enter_meter.dart';
 import '/models/Meter.dart';
+import '/models/MeterUsage.dart'; // Import the MeterUsage model
 import 'payment.dart';
 import 'usagepage.dart'; // Import the UsagePage
 
@@ -19,14 +18,14 @@ class MetersPage extends StatefulWidget {
 
 class _MetersPageState extends State<MetersPage> {
   final List<Meter> _meters = [];
-  final Map<int, String> _meterUsageMap =
-      {}; // Map to store meter usage information
-
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   final AuthService _authService = AuthService(); // Initialize AuthService
   bool _isLoading = false;
   String? _errorMessage;
+
+  // Map to store meter usages
+  final Map<int, double> _meterUsages = {};
 
   @override
   void initState() {
@@ -51,32 +50,23 @@ class _MetersPageState extends State<MetersPage> {
         return;
       }
 
-      // Fetch meters
       final meters = await _authService.getMetersByUserId(userId);
-
-      // Clear previous data
-      _meterUsageMap.clear();
-
-      // Fetch usage for each meter and populate the map
-      for (var meter in meters) {
-        try {
-          final meterUsageList =
-              await _authService.getMeterUsageByMeterId(meter.meterId);
-          final meterUsage = meterUsageList.isNotEmpty
-              ? meterUsageList.first
-              : '0'; // Assuming list contains a single usage value
-          _meterUsageMap[meter.meterId] =
-              '$meterUsage KW'; // Store usage information with "KW" suffix
-        } catch (e) {
-          print('Error fetching usage for meter ${meter.meterId}: $e');
-          _meterUsageMap[meter.meterId] = 'Error fetching usage';
-        }
-      }
-
       setState(() {
         _meters.clear();
         _meters.addAll(meters);
       });
+
+      // Fetch usage for each meter
+      for (var meter in meters) {
+        final usageData =
+            await _authService.getMeterUsageByMeterId(meter.meterId);
+        // Sum up the usage amounts
+        double totalUsage = usageData.fold(
+            0, (sum, usage) => sum + double.parse(usage.usageAmount));
+        setState(() {
+          _meterUsages[meter.meterId] = totalUsage;
+        });
+      }
     } catch (e) {
       setState(() {
         _errorMessage = 'An error occurred: $e';
@@ -255,6 +245,8 @@ class _MetersPageState extends State<MetersPage> {
   }
 
   Widget _buildMeterCard(Meter meter) {
+    final usageAmount =
+        _meterUsages[meter.meterId] ?? 0.0; // Fetch the usage amount
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -316,17 +308,18 @@ class _MetersPageState extends State<MetersPage> {
                         color: Colors.white70, size: 18),
                     SizedBox(width: 5),
                     const Text(
-                      'Meter Details',
+                      'Meter Usage:',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
                       ),
                     ),
+                    SizedBox(width: 10),
                     Text(
-                      'Usage: ${_meterUsageMap[meter.meterId] ?? '0 KW'}', // Display usage information
+                      '${usageAmount.toStringAsFixed(2)} KW',
                       style: const TextStyle(
                         color: Colors.white70,
-                        fontSize: 14,
+                        fontSize: 18,
                       ),
                     )
                   ],
