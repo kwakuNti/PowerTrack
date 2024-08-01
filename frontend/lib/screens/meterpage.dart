@@ -10,6 +10,7 @@ import '/models/MeterUsage.dart'; // Import the MeterUsage model
 import 'payment.dart';
 import 'usagepage.dart'; // Import the UsagePage
 import 'qr.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class MetersPage extends StatefulWidget {
   const MetersPage({super.key});
@@ -86,6 +87,50 @@ class _MetersPageState extends State<MetersPage> {
     setState(() {
       _meters.add(meter);
     });
+  }
+
+  Future<void> _onQRScanned(Map<String, dynamic> meterData) async {
+    final userId =
+        Provider.of<AuthProvider>(context, listen: false).user?.user_id;
+    if (userId == null) {
+      setState(() {
+        _errorMessage = 'User ID is null';
+      });
+      print('User ID is null');
+      return;
+    }
+
+    try {
+      final response = await _authService.createMeter(
+        userId: userId,
+        meterNumber: meterData['meterNumber'] ?? '',
+        location: meterData['location'] ?? '',
+        meterName: meterData['meterName'] ?? '',
+        customerName: meterData['customerName'] ?? '',
+        customerNumber: meterData['customerNumber'] ?? '',
+      );
+
+      if (response['status'] == 'success') {
+        final meter = Meter(
+          meterName: meterData['meterName'] ?? '',
+          meterNumber: meterData['meterNumber'] ?? '',
+          customerName: meterData['customerName'] ?? '',
+          customerNumber: meterData['customerNumber'] ?? '',
+          location: meterData['location'] ?? '',
+          meterId: response['meter_id'] ?? 0,
+          userId: userId,
+        );
+        _addMeter(meter);
+        print('Meter successfully created: $meter');
+      } else {
+        print('Failed to create meter: ${response['message']}');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred: $e';
+      });
+      print('Error during meter creation: $e');
+    }
   }
 
   void _onRefresh() async {
@@ -364,30 +409,21 @@ class _MetersPageState extends State<MetersPage> {
 
   Widget _buildScanQRCard(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => QRScannerPage(
-              onQRViewCreated: (Map<String, dynamic> meterData) {
-                final meter = Meter(
-                  meterName: meterData['meterName'],
-                  meterNumber: meterData['meterNumber'],
-                  customerName: meterData['customerName'],
-                  customerNumber: meterData['customerNumber'],
-                  location: meterData['location'],
-                  meterId: meterData['meterId'],
-                  userId:
-                      meterData['meterId'], // Adjust as per your Meter model
-                );
-                _addMeter(meter);
+              onQRViewCreated: (meterData) async {
+                await _onQRScanned(meterData);
+                await _fetchMeters();
               },
             ),
           ),
-        ).then((_) => _fetchMeters());
+        );
       },
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.8, // Make card wider
         height: 200,
         margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         decoration: BoxDecoration(
@@ -408,7 +444,7 @@ class _MetersPageState extends State<MetersPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.qr_code,
+                Icons.qr_code_scanner,
                 size: 50,
                 color: Colors.white,
               ),

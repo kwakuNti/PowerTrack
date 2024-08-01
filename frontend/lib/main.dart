@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/auth_provider.dart';
 import 'services/otp.dart';
 import 'screens/login_screen.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
