@@ -1,38 +1,62 @@
 <?php
 
-require_once __DIR__ . '/../models/Maintenance.php';
+require_once __DIR__ . '/../models/MaintenanceRequest.php';
 
-class MaintenanceController
+class MaintenanceRequestController
 {
-    private $maintenanceModel;
+    protected $maintenanceRequestModel;
 
     public function __construct($pdo)
     {
-        $this->maintenanceModel = new Maintenance($pdo);
+        $this->maintenanceRequestModel = new MaintenanceRequest($pdo);
     }
 
-    public function createMaintenanceRequest($data)
+    public function createRequest($data)
     {
-        return $this->maintenanceModel->create($data);
+        try {
+            $this->maintenanceRequestModel->createRequest(
+                $data['meter_id'],
+                $data['user_id'],
+                $data['description']
+            );
+            return ['success' => true];
+        } catch (PDOException $e) {
+            header('HTTP/1.1 422 Unprocessable Entity');
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
     }
 
-    public function getMaintenanceRequestById($id)
+    public function updateRequestStatus($request_id, $status)
     {
-        return $this->maintenanceModel->find($id);
+        try {
+            $this->maintenanceRequestModel->updateRequestStatus($request_id, $status);
+            return ['success' => true];
+        } catch (PDOException $e) {
+            header('HTTP/1.1 422 Unprocessable Entity');
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
     }
 
-    public function getAllMaintenanceRequests()
+    public function getRequestsByUserId($user_id)
     {
-        return $this->maintenanceModel->all();
+        try {
+            $requests = $this->maintenanceRequestModel->fetchRequestsByUserId($user_id);
+            return ['success' => true, 'data' => $requests];
+        } catch (Exception $e) {
+            header('HTTP/1.1 422 Unprocessable Entity');
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
     }
 
-    public function updateMaintenanceRequest($id, $data)
+    public function getAllRequests()
     {
-        return $this->maintenanceModel->update($id, $data);
-    }
-
-    public function deleteMaintenanceRequest($id)
-    {
-        return $this->maintenanceModel->delete('id', $id);
+        try {
+            $requests = $this->maintenanceRequestModel->fetchAllRequests();
+            return ['success' => true, 'data' => $requests];
+        } catch (Exception $e) {
+            header('HTTP/1.1 422 Unprocessable Entity');
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
     }
 }
+?>
