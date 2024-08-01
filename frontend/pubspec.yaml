@@ -60,6 +60,8 @@ dependencies:
   fluttertoast: ^8.2.6
   geolocator: ^9.0.0 # Check for the latest version
   pay: ^2.0.0
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.1.1
 
 
 

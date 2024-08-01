@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/auth_provider.dart';
+import 'package:frontend/screens/qr.dart';
 import 'package:frontend/services/auth_services.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -8,6 +9,7 @@ import '/models/Meter.dart';
 import '/models/MeterUsage.dart'; // Import the MeterUsage model
 import 'payment.dart';
 import 'usagepage.dart'; // Import the UsagePage
+import 'qr.dart';
 
 class MetersPage extends StatefulWidget {
   const MetersPage({super.key});
@@ -112,6 +114,9 @@ class _MetersPageState extends State<MetersPage> {
                 child: Row(
                   children: [
                     _buildAddMeterCard(context),
+                    _buildScanQRCard(
+                        context), // Add this line to include the QR scan card
+
                     ..._meters.map((meter) => _buildMeterCard(meter)),
                   ],
                 ),
@@ -349,6 +354,73 @@ class _MetersPageState extends State<MetersPage> {
                   ),
                   child: const Text('Buy Credit'),
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScanQRCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => QRScannerPage(
+              onQRViewCreated: (Map<String, dynamic> meterData) {
+                final meter = Meter(
+                  meterName: meterData['meterName'],
+                  meterNumber: meterData['meterNumber'],
+                  customerName: meterData['customerName'],
+                  customerNumber: meterData['customerNumber'],
+                  location: meterData['location'],
+                  meterId: meterData['meterId'],
+                  userId:
+                      meterData['meterId'], // Adjust as per your Meter model
+                );
+                _addMeter(meter);
+              },
+            ),
+          ),
+        ).then((_) => _fetchMeters());
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.8,
+        height: 200,
+        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.teal[700],
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.qr_code,
+                size: 50,
+                color: Colors.white,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Scan QR Code',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
