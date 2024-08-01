@@ -39,7 +39,7 @@ $changePasswordController = new ChangePasswordController($pdo);
 $meterController = new MeterController($pdo);
 $transactionController = new TransactionController($pdo);
 $meterUsageController = new MeterUsageController($pdo);
-$maintenanceController = new MaintenanceController($pdo);
+$maintenanceController = new MaintenanceRequestController($pdo);
 
 
 
