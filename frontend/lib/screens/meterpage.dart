@@ -252,7 +252,7 @@ class _MetersPageState extends State<MetersPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UsagePage(meter: meter),
+            builder: (context) => UsagePage(meter: meter, usage: usageAmount),
           ),
         );
       },

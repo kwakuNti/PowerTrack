@@ -226,46 +226,6 @@ $router->map('GET', '/meter_usage/[i:meter_id]', function ($meter_id) use ($mete
     $meterUsageController->getUsageByMeterId($meter_id);
 });
 
-// Create a maintenance request
-$router->map('POST', '/maintenance', function () use ($maintenanceController) {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    // Validate data
-    ValidationMiddleWare::handle($data, [
-        'user_id' => 'integer',
-        'meter_id' => 'integer',
-        'description' => 'string',
-        'status' => 'string'
-    ]);
-
-    echo json_encode($maintenanceController->createRequest($data));
-});
-
-// Get maintenance requests by user ID
-$router->map('GET', '/maintenance/[i:user_id]', function ($user_id) use ($maintenanceController) {
-    ValidationMiddleWare::handle(['user_id' => $user_id], ['user_id' => 'integer']);
-    echo json_encode($maintenanceController->getRequestsByUserId($user_id));
-});
-
-// Update a maintenance request
-$router->map('PUT', '/maintenance/[i:request_id]', function ($request_id) use ($maintenanceController) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    
-    // Validate data
-    ValidationMiddleWare::handle($data, [
-        'status' => 'string',
-        'description' => 'string'
-    ]);
-
-    echo json_encode($maintenanceController->updateRequest($request_id, $data));
-});
-
-// Soft delete a maintenance request
-$router->map('DELETE', '/maintenance/[i:request_id]', function ($request_id) use ($maintenanceController) {
-    ValidationMiddleWare::handle(['request_id' => $request_id], ['request_id' => 'integer']);
-    echo json_encode($maintenanceController->deleteRequest($request_id));
-});
-
 
 
 $match = $router->match();

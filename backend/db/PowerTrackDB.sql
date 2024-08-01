@@ -61,19 +61,6 @@ CREATE TABLE meter_usage (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
--- Create MaintenanceRequests table
-CREATE TABLE maintenance_requests (
-    request_id INT AUTO_INCREMENT PRIMARY KEY,
-    meter_id INT NOT NULL,
-    user_id INT NOT NULL,
-    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
-    description TEXT NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (meter_id) REFERENCES meters(meter_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
-
 
 -- Create Tokens table
 CREATE TABLE tokens (

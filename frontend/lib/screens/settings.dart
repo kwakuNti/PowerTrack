@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import 'feedback.dart';
 import 'manage_card.dart';
 import 'package:http/http.dart' as http;
 
@@ -290,20 +289,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: _showLogoutConfirmationDialog,
                   ),
                   const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.error),
-                    title: Text(
-                      'Report Issue',
-                      style: GoogleFonts.poppins(),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MaintenancePage()),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
