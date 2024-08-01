@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import '../models/Meter.dart'; // Make sure to import the correct Meter class
 import '../services/auth_services.dart';
 import '../providers/auth_provider.dart';
@@ -25,6 +27,88 @@ class _EnterMeterNumberPageState extends State<EnterMeterNumberPage> {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    print('Requesting location permissions...');
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print('Location services are disabled.');
+      setState(() {
+        _errorMessage = 'Location services are disabled.';
+      });
+      return;
+    }
+
+    // Check location permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      print('Location permissions are denied. Requesting permission...');
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print('Location permissions are still denied.');
+        setState(() {
+          _errorMessage = 'Location permissions are denied.';
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print('Location permissions are permanently denied.');
+      setState(() {
+        _errorMessage = 'Location permissions are permanently denied.';
+      });
+      return;
+    }
+
+    // Get current position
+    print('Fetching current position...');
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      print(
+          'Position retrieved: Latitude = ${position.latitude}, Longitude = ${position.longitude}');
+
+      // Get placemarks from position
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks[0];
+        // Handle null values in placemark
+        String street = placemark.street ?? '';
+        String locality = placemark.locality ?? '';
+        String country = placemark.country ?? '';
+
+        String address = '$street, $locality, $country';
+        print('Address retrieved: $address');
+
+        setState(() {
+          _addressController.text = address;
+        });
+      } else {
+        print('No placemarks found for the given coordinates.');
+        setState(() {
+          _errorMessage = 'Could not find an address for the location.';
+        });
+      }
+    } catch (e) {
+      print('Error occurred while fetching location: $e');
+      setState(() {
+        _errorMessage = 'Failed to get address: $e';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
