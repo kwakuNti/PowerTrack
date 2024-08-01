@@ -16,7 +16,6 @@ require_once __DIR__ . '/app/controllers/meterController.php';
 require_once __DIR__ . '/app/controllers/changePasswordController.php';
 require_once __DIR__ . '/app/controllers/transactionController.php';
 require_once __DIR__ . '/app/controllers/MeterUsageController.php';
-require_once __DIR__ . '/app/controllers/MaintenanceController.php';
 
 
 
@@ -39,7 +38,6 @@ $changePasswordController = new ChangePasswordController($pdo);
 $meterController = new MeterController($pdo);
 $transactionController = new TransactionController($pdo);
 $meterUsageController = new MeterUsageController($pdo);
-$maintenanceController = new MaintenanceRequestController($pdo);
 
 
 
