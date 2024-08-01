@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../models/MaintenanceRequest.php';
+require_once __DIR__ . '/../models/Maintenance.php';
 
 class MaintenanceRequestController
 {
